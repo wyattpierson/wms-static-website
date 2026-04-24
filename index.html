@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>wyatt makes stuff</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Playfair+Display:ital,wght@0,700;1,400&display=swap" rel="stylesheet" />
+
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --bg: #09090f;
+      --surface: #10101a;
+      --border: #1e1e30;
+      --text: #e2e0f0;
+      --muted: #52506e;
+      --accent: #a78bfa;
+      --accent-2: #60a5fa;
+      --accent-dim: rgba(167, 139, 250, 0.08);
+      --accent-2-dim: rgba(96, 165, 250, 0.06);
+      --font-mono: 'DM Mono', monospace;
+      --font-display: 'Playfair Display', serif;
+      --nav-height: 60px;
+    }
+
+    html, body { height: 100%; }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: var(--font-mono);
+      font-weight: 300;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+    }
+
+    /* Grain overlay */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      background-repeat: repeat;
+      background-size: 128px;
+      pointer-events: none;
+      z-index: 999;
+      opacity: 0.45;
+    }
+
+    /* Ambient glows */
+    .glow-1, .glow-2 {
+      position: fixed;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .glow-1 {
+      top: -20%;
+      left: 15%;
+      width: 700px;
+      height: 700px;
+      background: radial-gradient(circle, rgba(167, 139, 250, 0.06) 0%, transparent 65%);
+    }
+    .glow-2 {
+      top: 10%;
+      right: 5%;
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(96, 165, 250, 0.05) 0%, transparent 65%);
+    }
+
+    /* ── NAV ── */
+    nav.site-nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      height: var(--nav-height);
+      width: 100%;
+      display: flex;
+      align-items: center;
+      border-bottom: 1px solid var(--border);
+      background: rgba(9, 9, 15, 0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      opacity: 0;
+      animation: fadeDown 0.5s ease forwards;
+      animation-delay: 0.05s;
+    }
+
+    .nav-inner {
+      max-width: 900px;
+      margin: 0 auto;
+      width: 100%;
+      padding: 0 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .nav-logo {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      color: var(--text);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+      transition: color 0.2s;
+    }
+    .nav-logo:hover { color: var(--accent); }
+    .nav-logo .logo-tilde { color: var(--accent); font-size: 1rem; }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 0.15rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      display: block;
+      padding: 0.4rem 0.85rem;
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      font-weight: 400;
+      letter-spacing: 0.06em;
+      color: var(--muted);
+      text-decoration: none;
+      border-radius: 3px;
+      transition: color 0.18s, background 0.18s;
+      position: relative;
+    }
+    .nav-links a:hover {
+      color: var(--text);
+      background: var(--accent-dim);
+    }
+    .nav-links a.active {
+      color: var(--accent);
+    }
+    .nav-links a.active::after {
+      content: '';
+      position: absolute;
+      bottom: -1px;
+      left: 0.85rem;
+      right: 0.85rem;
+      height: 1px;
+      background: var(--accent);
+      opacity: 0.5;
+    }
+
+
+
+    /* ── MAIN ── */
+    main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 4rem 2rem 3rem;
+      position: relative;
+      z-index: 1;
+      max-width: 900px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .label {
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 2.5rem;
+      opacity: 0;
+      animation: fadeUp 0.6s ease forwards;
+      animation-delay: 0.2s;
+    }
+    .label span { color: var(--accent); }
+
+    .hero { margin-bottom: 2.5rem; }
+
+    .hero h1 {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: clamp(3rem, 9vw, 6rem);
+      line-height: 0.95;
+      letter-spacing: -0.02em;
+      color: var(--text);
+      opacity: 0;
+      animation: fadeUp 0.7s ease forwards;
+      animation-delay: 0.35s;
+    }
+
+    .hero h1 em {
+      font-style: italic;
+      font-weight: 400;
+      background: linear-gradient(105deg, var(--accent) 20%, var(--accent-2) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin: 2rem 0;
+      opacity: 0;
+      animation: fadeUp 0.6s ease forwards;
+      animation-delay: 0.5s;
+    }
+    .divider-line {
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(to right, var(--border), transparent);
+    }
+    .divider-gem {
+      width: 6px;
+      height: 6px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      transform: rotate(45deg);
+      border-radius: 1px;
+      box-shadow: 0 0 8px rgba(167, 139, 250, 0.4);
+    }
+
+    .bio {
+      font-size: 0.95rem;
+      line-height: 1.8;
+      color: #6e6b8a;
+      max-width: 500px;
+      opacity: 0;
+      animation: fadeUp 0.6s ease forwards;
+      animation-delay: 0.65s;
+    }
+    .bio a {
+      color: var(--text);
+      text-decoration: none;
+      border-bottom: 1px solid var(--border);
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .bio a:hover { color: var(--accent); border-color: var(--accent); }
+
+    /* External links */
+    .links {
+      margin-top: 3rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      opacity: 0;
+      animation: fadeUp 0.6s ease forwards;
+      animation-delay: 0.8s;
+    }
+
+    .link-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.55rem 1.1rem;
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      font-weight: 400;
+      letter-spacing: 0.05em;
+      color: var(--muted);
+      text-decoration: none;
+      background: transparent;
+      transition: all 0.2s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .link-item::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, var(--accent-dim), var(--accent-2-dim));
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+    .link-item:hover { border-color: var(--accent); color: var(--accent); }
+    .link-item:hover::before { opacity: 1; }
+    .link-item .arrow { font-size: 0.7rem; transition: transform 0.2s; }
+    .link-item:hover .arrow { transform: translate(2px, -2px); }
+
+    /* ── FOOTER ── */
+    footer {
+      position: relative;
+      z-index: 1;
+      padding: 1.25rem 2rem;
+      max-width: 900px;
+      margin: 0 auto;
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px solid var(--border);
+      opacity: 0;
+      animation: fadeUp 0.5s ease forwards;
+      animation-delay: 1s;
+    }
+
+    .footer-text {
+      font-size: 0.65rem;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+    }
+
+    .status {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.65rem;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+    }
+    .status-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+      animation: pulse 2.5s ease-in-out infinite;
+    }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(14px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeDown {
+      from { opacity: 0; transform: translateY(-8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50%       { opacity: 0.35; transform: scale(0.75); }
+    }
+    /* ── RESPONSIVE ── */
+    @media (max-width: 600px) {
+      .hero h1 { line-height: 1.05; }
+      footer { flex-direction: column; gap: 0.75rem; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="glow-1"></div>
+  <div class="glow-2"></div>
+
+  <!-- ── NAVIGATION ── -->
+  <nav class="site-nav">
+    <div class="nav-inner">
+      <a href="/" class="nav-logo">
+        <span class="logo-tilde">~</span>wyattmakesstuff
+      </a>
+    </div>
+  </nav>
+
+  <!-- ── CONTENT ── -->
+  <main>
+    <div class="hero">
+      <h1>Wyatt<br><em>makes stuff.</em></h1>
+    </div>
+
+    <div class="divider">
+      <div class="divider-line"></div>
+      <div class="divider-gem"></div>
+    </div>
+
+    <p class="bio">
+      I am Wyatt. I make stuff. You may not think so, because this page has no stuff...
+      but just you wait... someday... there will be stuff... made by me
+    </p>
+
+    <nav class="links" aria-label="External links">
+      <!--
+      <a class="link-item" href="https://github.com/wyattmakesstuff" target="_blank" rel="noopener">
+        GitHub <span class="arrow">↗</span>
+      </a>
+      -->
+      <!-- Subdomain project links, e.g.: -->
+      <!-- <a class="link-item" href="https://myproject.wyattmakesstuff.com" target="_blank">myproject <span class="arrow">↗</span></a> -->
+    </nav>
+  </main>
+
+  <!-- ── FOOTER ── -->
+  <footer>
+    <span class="footer-text">wyattmakesstuff.com</span>
+    <span class="status">
+      <span class="status-dot"></span>
+      making stuff
+    </span>
+  </footer>
+
+
+
+</body>
+</html>
