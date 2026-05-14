@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Support — Amongst Friends</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Playfair+Display:ital,wght@0,700;1,400&display=swap" rel="stylesheet" />
+
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --bg: #09090f;
+      --surface: #10101a;
+      --border: #1e1e30;
+      --text: #e2e0f0;
+      --muted: #52506e;
+      --accent: #a78bfa;
+      --accent-2: #60a5fa;
+      --accent-dim: rgba(167, 139, 250, 0.08);
+      --font-mono: 'DM Mono', monospace;
+      --font-display: 'Playfair Display', serif;
+      --nav-height: 60px;
+    }
+
+    html, body { height: 100%; }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: var(--font-mono);
+      font-weight: 300;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      background-repeat: repeat;
+      background-size: 128px;
+      pointer-events: none;
+      z-index: 999;
+      opacity: 0.45;
+    }
+
+    .glow-1 {
+      position: fixed;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 0;
+      top: -20%;
+      left: 15%;
+      width: 700px;
+      height: 700px;
+      background: radial-gradient(circle, rgba(167, 139, 250, 0.05) 0%, transparent 65%);
+    }
+
+    /* ── NAV ── */
+    nav.site-nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      height: var(--nav-height);
+      width: 100%;
+      display: flex;
+      align-items: center;
+      border-bottom: 1px solid var(--border);
+      background: rgba(9, 9, 15, 0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      opacity: 0;
+      animation: fadeDown 0.5s ease forwards;
+      animation-delay: 0.05s;
+    }
+
+    .nav-inner {
+      max-width: 900px;
+      margin: 0 auto;
+      width: 100%;
+      padding: 0 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .nav-logo {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      color: var(--text);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+      transition: color 0.2s;
+    }
+    .nav-logo:hover { color: var(--accent); }
+    .nav-logo .logo-tilde { color: var(--accent); font-size: 1rem; }
+
+    .nav-back {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--muted);
+      text-decoration: none;
+      letter-spacing: 0.06em;
+      transition: color 0.18s;
+    }
+    .nav-back:hover { color: var(--accent); }
+
+    /* ── MAIN ── */
+    main {
+      flex: 1;
+      position: relative;
+      z-index: 1;
+      max-width: 900px;
+      margin: 0 auto;
+      width: 100%;
+      padding: 4rem 2rem 3rem;
+    }
+
+    /* Page header */
+    .page-header {
+      margin-bottom: 3.5rem;
+      opacity: 0;
+      animation: fadeUp 0.6s ease forwards;
+      animation-delay: 0.2s;
+    }
+
+    .page-label {
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 1.25rem;
+    }
+    .page-label span { color: var(--accent); }
+
+    .page-header h1 {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: clamp(2rem, 6vw, 3.5rem);
+      line-height: 1;
+      letter-spacing: -0.02em;
+    }
+
+    .page-header h1 em {
+      font-style: italic;
+      font-weight: 400;
+      background: linear-gradient(105deg, var(--accent) 20%, var(--accent-2) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .page-header p {
+      margin-top: 1rem;
+      font-size: 0.9rem;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    /* Divider */
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin: 2.5rem 0;
+      opacity: 0;
+      animation: fadeUp 0.5s ease forwards;
+      animation-delay: 0.35s;
+    }
+    .divider-line {
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(to right, var(--border), transparent);
+    }
+    .divider-gem {
+      width: 6px;
+      height: 6px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      transform: rotate(45deg);
+      border-radius: 1px;
+      box-shadow: 0 0 8px rgba(167, 139, 250, 0.4);
+    }
+
+    /* Sections */
+    .sections {
+      display: flex;
+      flex-direction: column;
+      gap: 2.5rem;
+    }
+
+    .section {
+      opacity: 0;
+      animation: fadeUp 0.6s ease forwards;
+    }
+    .section:nth-child(1) { animation-delay: 0.4s; }
+    .section:nth-child(2) { animation-delay: 0.5s; }
+    .section:nth-child(3) { animation-delay: 0.6s; }
+    .section:nth-child(4) { animation-delay: 0.7s; }
+
+    .section-label {
+      font-size: 0.62rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 1rem;
+    }
+
+    .section h2 {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 1.3rem;
+      letter-spacing: -0.01em;
+      margin-bottom: 0.85rem;
+      color: var(--text);
+    }
+
+    .section p, .section li {
+      font-size: 0.88rem;
+      line-height: 1.8;
+      color: #6e6b8a;
+    }
+
+    .section ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      padding-left: 0;
+    }
+
+    .section ul li {
+      padding-left: 1.25rem;
+      position: relative;
+    }
+
+    .section ul li::before {
+      content: '—';
+      position: absolute;
+      left: 0;
+      color: var(--muted);
+      font-size: 0.75rem;
+    }
+
+    /* Contact card */
+    .contact-card {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-top: 1.25rem;
+      padding: 0.85rem 1.25rem;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      background: var(--accent-dim);
+      text-decoration: none;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    .contact-card:hover {
+      border-color: var(--accent);
+      background: rgba(167, 139, 250, 0.12);
+    }
+    .contact-card .contact-label {
+      font-size: 0.65rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      display: block;
+      margin-bottom: 0.2rem;
+    }
+    .contact-card .contact-email {
+      font-size: 0.85rem;
+      color: var(--accent);
+      letter-spacing: 0.02em;
+    }
+
+    /* Policy link */
+    .policy-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      margin-top: 1rem;
+      font-size: 0.8rem;
+      color: var(--muted);
+      text-decoration: none;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 1px;
+      transition: color 0.2s, border-color 0.2s;
+    }
+    .policy-link:hover {
+      color: var(--accent);
+      border-color: var(--accent);
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      position: relative;
+      z-index: 1;
+      padding: 1.25rem 2rem;
+      max-width: 900px;
+      margin: 0 auto;
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px solid var(--border);
+      opacity: 0;
+      animation: fadeUp 0.5s ease forwards;
+      animation-delay: 0.9s;
+    }
+
+    .footer-text {
+      font-size: 0.65rem;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+    }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(14px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeDown {
+      from { opacity: 0; transform: translateY(-8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 600px) {
+      footer { flex-direction: column; gap: 0.75rem; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="glow-1"></div>
+
+  <!-- ── NAV ── -->
+  <nav class="site-nav">
+    <div class="nav-inner">
+      <a href="/" class="nav-logo">
+        <span class="logo-tilde">~</span>wyattmakesstuff
+      </a>
+      <a href="/amongst-friends" class="nav-back">← amongst friends</a>
+    </div>
+  </nav>
+
+  <!-- ── CONTENT ── -->
+  <main>
+    <div class="page-header">
+      <p class="page-label">// <span>support</span></p>
+      <h1>Amongst <em>Friends</em></h1>
+      <p>Need help? You're in the right place.</p>
+    </div>
+
+    <div class="divider">
+      <div class="divider-line"></div>
+      <div class="divider-gem"></div>
+    </div>
+
+    <div class="sections">
+
+      <div class="section">
+        <p class="section-label">contact</p>
+        <h2>Get in Touch</h2>
+        <p>
+          For any questions, issues, or feedback, reach out by email and we'll
+          get back to you as soon as possible.
+        </p>
+        <a class="contact-card" href="mailto:amongst.friends.app@gmail.com">
+          <div>
+            <span class="contact-label">support email</span>
+            <span class="contact-email">amongst.friends.app@gmail.com</span>
+          </div>
+        </a>
+      </div>
+
+      <div class="section">
+        <p class="section-label">common questions</p>
+        <h2>FAQ</h2>
+        <ul>
+          <li>
+            <strong style="color: var(--text); font-weight: 400;">Do I need to use my real name?</strong><br>
+            No. Your display name can be anything you like, it doesn't need to
+            reflect your real identity in any way.
+          </li>
+          <li>
+            <strong style="color: var(--text); font-weight: 400;">What personal data does the app store?</strong><br>
+            Only your email address (used to sign in), your chosen display name,
+            and the reviews or ratings you create. Nothing is linked to real-world
+            identity beyond what you choose to share.
+          </li>
+          <li>
+            <strong style="color: var(--text); font-weight: 400;">How do I delete my account?</strong><br>
+            There is a "Delete Account & Data" button on the Profile page. This will delete all data.
+          </li>
+          <li>
+            <strong style="color: var(--text); font-weight: 400;">I found a bug — what should I do?</strong><br>
+            Email us with a description of the issue and, if possible, what steps
+            led to it. Screenshots are always helpful.
+          </li>
+        </ul>
+      </div>
+
+      <div class="section">
+        <p class="section-label">legal</p>
+        <h2>Privacy Policy</h2>
+        <p>
+          Amongst Friends collects only what's necessary to run the app: your
+          email address for authentication, a display name of your choosing, and
+          any reviews or ratings you submit. We do not sell your data or share it
+          with third parties for advertising purposes.
+        </p>
+        <a class="policy-link" href="https://wyattpierson.github.io/wms-AmongstFriends-web/privacy-policy.html" target="_blank" rel="noopener">
+          Read the full privacy policy ↗
+        </a>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- ── FOOTER ── -->
+  <footer>
+    <span class="footer-text">wyattmakesstuff.com / amongst-friends</span>
+    <span class="footer-text">© <script>document.write(new Date().getFullYear())</script> wyattmakesstuff</span>
+  </footer>
+
+</body>
+</html>
