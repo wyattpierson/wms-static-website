@@ -9,231 +9,584 @@
 <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #0d0f14;
-    --bg2: #161921;
-    --bg3: #1e2230;
-    --border: rgba(255,255,255,0.07);
-    --border2: rgba(255,255,255,0.14);
-    --text: #e8ecf4;
-    --muted: #7a8199;
-    --accent: #c8f053;
-    --accent2: #5f8cff;
-    --card-r: 14px;
+    --bg: #0d0f14; --bg2: #161921; --bg3: #1e2230;
+    --border: rgba(255,255,255,0.07); --border2: rgba(255,255,255,0.14);
+    --text: #e8ecf4; --muted: #7a8199;
+    --accent: #c8f053; --accent2: #5f8cff; --card-r: 14px;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; min-height: 100vh; }
-
-  /* Subtle grid bg */
-  body::before {
-    content: ''; position: fixed; inset: 0;
-    background-image: linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
-    background-size: 40px 40px; pointer-events: none; z-index: 0;
-  }
-
+  body::before { content: ''; position: fixed; inset: 0; background-image: linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px); background-size: 40px 40px; pointer-events: none; z-index: 0; }
   .wrap { max-width: 1100px; margin: 0 auto; padding: 0 24px 80px; position: relative; z-index: 1; }
 
-  /* Header */
   header { padding: 48px 0 36px; border-bottom: 1px solid var(--border); margin-bottom: 36px; }
-  .header-inner { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
   .league-badge { font-family: 'Space Mono', monospace; font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); background: rgba(200,240,83,0.1); border: 1px solid rgba(200,240,83,0.25); padding: 4px 10px; border-radius: 4px; margin-bottom: 10px; display: inline-block; }
   h1 { font-size: clamp(28px,5vw,48px); font-weight: 600; letter-spacing: -0.02em; line-height: 1.1; color: var(--text); }
   h1 span { color: var(--accent); }
-  .header-meta { display: flex; gap: 20px; flex-wrap: wrap; }
-  .meta-chip { font-size: 12px; color: var(--muted); font-family: 'Space Mono', monospace; display: flex; align-items: center; gap: 6px; }
-  .meta-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--accent2); }
 
-  /* Nav tabs */
   .nav-bar { display: flex; gap: 4px; flex-wrap: wrap; margin-bottom: 32px; padding-bottom: 20px; border-bottom: 1px solid var(--border); }
   .nav-btn { font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500; padding: 7px 16px; border-radius: 8px; border: 1px solid var(--border); background: transparent; color: var(--muted); cursor: pointer; transition: all 0.15s; }
   .nav-btn:hover { background: var(--bg2); color: var(--text); border-color: var(--border2); }
   .nav-btn.active { background: var(--accent); color: #0d0f14; border-color: var(--accent); font-weight: 600; }
 
-  /* Overview grid */
   .overview-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; }
   .overview-card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--card-r); padding: 20px 16px; cursor: pointer; transition: all 0.18s; position: relative; overflow: hidden; }
-  .overview-card::after { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(200,240,83,0) 0%, rgba(200,240,83,0.04) 100%); opacity: 0; transition: opacity 0.2s; }
   .overview-card:hover { border-color: var(--border2); transform: translateY(-2px); }
-  .overview-card:hover::after { opacity: 1; }
   .ov-name { font-size: 16px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
   .ov-count { font-size: 11px; color: var(--muted); font-family: 'Space Mono', monospace; margin-bottom: 12px; }
   .ov-types { display: flex; gap: 4px; flex-wrap: wrap; margin-bottom: 10px; }
   .ov-bst { font-family: 'Space Mono', monospace; font-size: 11px; color: var(--muted); }
   .ov-bst strong { color: var(--accent); }
 
-  /* Roster view */
-  .roster-header { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 24px; flex-wrap: wrap; gap: 8px; }
+  .roster-header { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 20px; flex-wrap: wrap; gap: 8px; }
   .roster-title { font-size: 24px; font-weight: 600; color: var(--text); }
   .roster-hint { font-size: 12px; color: var(--muted); font-family: 'Space Mono', monospace; }
+  .roster-sub-tabs { display: flex; gap: 6px; margin-bottom: 20px; }
+  .sub-tab { font-size: 12px; padding: 5px 14px; border-radius: 6px; border: 1px solid var(--border); background: transparent; color: var(--muted); cursor: pointer; transition: all 0.15s; font-family: 'DM Sans', sans-serif; }
+  .sub-tab:hover { background: var(--bg2); color: var(--text); }
+  .sub-tab.active { background: var(--bg3); color: var(--text); border-color: var(--border2); }
+
   .pokemon-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; }
-  .poke-card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--card-r); padding: 16px 12px 14px; text-align: center; cursor: pointer; transition: all 0.15s; }
+  .poke-card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--card-r); padding: 16px 12px 14px; text-align: center; cursor: pointer; transition: all 0.15s; position: relative; }
   .poke-card:hover { border-color: var(--border2); transform: translateY(-2px); }
+  .mega-badge { position: absolute; top: 8px; right: 8px; font-size: 8px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; background: rgba(200,240,83,0.15); color: var(--accent); border: 1px solid rgba(200,240,83,0.3); border-radius: 4px; padding: 1px 5px; }
   .poke-sprite { width: 80px; height: 80px; image-rendering: pixelated; display: block; margin: 0 auto 6px; }
   .poke-sprite-ph { width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; margin: 0 auto 6px; font-size: 32px; opacity: 0.3; }
   .poke-name { font-size: 12px; font-weight: 600; color: var(--text); margin-bottom: 8px; text-transform: capitalize; }
   .type-row { display: flex; gap: 4px; justify-content: center; flex-wrap: wrap; margin-bottom: 8px; }
   .type-pill { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; padding: 2px 7px; border-radius: 20px; }
   .bst-num { font-family: 'Space Mono', monospace; font-size: 10px; color: var(--muted); }
+  .ext-links { display: flex; gap: 6px; justify-content: center; margin-top: 6px; }
+  .ext-link { font-size: 9px; color: var(--muted); text-decoration: none; background: var(--bg3); border: 1px solid var(--border); border-radius: 4px; padding: 2px 6px; transition: all 0.12s; }
+  .ext-link:hover { color: var(--accent); border-color: rgba(200,240,83,0.3); }
+
+  /* Type chart */
+  .type-chart-wrap { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--card-r); padding: 20px; }
+  .tc-title { font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+  .tc-sub { font-size: 12px; color: var(--muted); margin-bottom: 18px; }
+  .tc-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 8px; }
+  .tc-cell { border-radius: 8px; padding: 8px 10px; text-align: center; }
+  .tc-type { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 3px; }
+  .tc-mult { font-family: 'Space Mono', monospace; font-size: 16px; font-weight: 700; }
+  .tc-note { font-size: 9px; opacity: 0.75; margin-top: 2px; }
+  .tc-immune { background: rgba(100,80,130,0.25); }
+  .tc-immune .tc-type { color: #9080b0; } .tc-immune .tc-mult { color: #c0b0e0; }
+  .tc-resist { background: rgba(80,190,100,0.15); }
+  .tc-resist .tc-type { color: #60d070; } .tc-resist .tc-mult { color: #80e890; }
+  .tc-weak { background: rgba(232,96,45,0.15); }
+  .tc-weak .tc-type { color: #f08060; } .tc-weak .tc-mult { color: #f8a090; }
+  .tc-dbl-weak { background: rgba(232,45,45,0.25); }
+  .tc-dbl-weak .tc-type { color: #f06060; } .tc-dbl-weak .tc-mult { color: #ff8080; }
+  .tc-section-label { font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; margin: 16px 0 8px; font-family: 'Space Mono', monospace; }
 
   /* All teams */
   .all-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; }
   .all-block { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--card-r); padding: 20px; }
   .all-block-name { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1px solid var(--border); font-family: 'Space Mono', monospace; }
-  .mini-row { display: flex; align-items: center; gap: 10px; padding: 5px 0; border-bottom: 1px solid var(--border); }
+  .mini-row { display: flex; align-items: center; gap: 10px; padding: 5px 0; border-bottom: 1px solid var(--border); cursor: pointer; transition: background 0.1s; border-radius: 4px; }
   .mini-row:last-child { border-bottom: none; }
+  .mini-row:hover { background: var(--bg3); }
   .mini-sprite { width: 36px; height: 36px; image-rendering: pixelated; flex-shrink: 0; }
   .mini-name { font-size: 12px; color: var(--text); flex: 1; text-transform: capitalize; }
   .mini-types { display: flex; gap: 3px; flex-shrink: 0; }
 
+  /* Schedule & Standings */
+  .sched-layout { display: grid; grid-template-columns: 1fr 320px; gap: 20px; align-items: start; }
+  .standings-box { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--card-r); padding: 20px; position: sticky; top: 20px; }
+  .standings-title { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1px solid var(--border); font-family: 'Space Mono', monospace; text-transform: uppercase; letter-spacing: 0.06em; }
+  .standings-row { display: grid; grid-template-columns: 24px 1fr 60px 60px; align-items: center; gap: 8px; padding: 6px 0; border-bottom: 1px solid var(--border); font-size: 13px; }
+  .standings-row:last-child { border-bottom: none; }
+  .standings-row.header { font-size: 10px; color: var(--muted); font-family: 'Space Mono', monospace; text-transform: uppercase; padding-bottom: 8px; }
+  .standings-rank { font-family: 'Space Mono', monospace; font-size: 11px; color: var(--muted); text-align: center; }
+  .standings-name { font-weight: 500; color: var(--text); }
+  .standings-rec { font-family: 'Space Mono', monospace; font-size: 12px; color: var(--muted); text-align: center; }
+  .standings-pts { font-family: 'Space Mono', monospace; font-size: 13px; font-weight: 700; color: var(--accent); text-align: center; }
+  .week-block { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--card-r); padding: 16px 20px; margin-bottom: 12px; }
+  .week-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); font-family: 'Space Mono', monospace; margin-bottom: 12px; }
+  .match-row { display: grid; grid-template-columns: 1fr 60px 1fr; align-items: center; gap: 8px; padding: 8px 0; border-bottom: 1px solid var(--border); }
+  .match-row:last-child { border-bottom: none; }
+  .match-team { font-size: 13px; font-weight: 500; color: var(--text); }
+  .match-team.right { text-align: right; }
+  .match-vs { font-family: 'Space Mono', monospace; font-size: 10px; color: var(--muted); text-align: center; }
+  .match-result { font-family: 'Space Mono', monospace; font-size: 11px; text-align: center; }
+  .result-win { color: var(--accent); }
+  .result-loss { color: #e05060; }
+  .result-pending { color: var(--muted); }
+  .week-current .week-label { color: var(--accent); }
+  .week-current { border-color: rgba(200,240,83,0.25); }
+
   /* Modal */
   .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center; z-index: 1000; backdrop-filter: blur(4px); padding: 20px; }
-  .modal { background: var(--bg2); border: 1px solid var(--border2); border-radius: 20px; padding: 28px 24px; width: 320px; max-height: 90vh; overflow-y: auto; position: relative; }
+  .modal { background: var(--bg2); border: 1px solid var(--border2); border-radius: 20px; padding: 28px 24px; width: 360px; max-height: 90vh; overflow-y: auto; position: relative; }
   .modal-close { position: absolute; top: 14px; right: 14px; background: var(--bg3); border: 1px solid var(--border); color: var(--muted); font-size: 16px; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.15s; }
   .modal-close:hover { color: var(--text); border-color: var(--border2); }
   .modal-sprite { width: 112px; height: 112px; image-rendering: pixelated; display: block; margin: 0 auto 10px; }
   .modal-name { font-size: 22px; font-weight: 600; color: var(--text); text-align: center; text-transform: capitalize; margin-bottom: 10px; }
-  .modal-types { display: flex; gap: 6px; justify-content: center; margin-bottom: 20px; }
-  .stat-section { }
-  .stat-label-row { display: flex; justify-content: space-between; font-family: 'Space Mono', monospace; font-size: 10px; color: var(--muted); margin-bottom: 10px; }
+  .modal-types { display: flex; gap: 6px; justify-content: center; margin-bottom: 16px; }
+  .modal-links { display: flex; gap: 8px; justify-content: center; margin-bottom: 20px; }
+  .modal-link { font-size: 11px; color: var(--muted); text-decoration: none; background: var(--bg3); border: 1px solid var(--border); border-radius: 6px; padding: 4px 10px; transition: all 0.12s; }
+  .modal-link:hover { color: var(--accent); border-color: rgba(200,240,83,0.3); }
+  .stat-toggle { display: flex; gap: 4px; margin-bottom: 12px; }
+  .stat-tab { font-size: 11px; padding: 4px 12px; border-radius: 6px; border: 1px solid var(--border); background: transparent; color: var(--muted); cursor: pointer; font-family: 'DM Sans', sans-serif; transition: all 0.12s; }
+  .stat-tab.active { background: var(--bg3); color: var(--text); border-color: var(--border2); }
   .stat-item { display: grid; grid-template-columns: 30px 1fr 28px; align-items: center; gap: 8px; margin-bottom: 6px; }
   .stat-key { font-family: 'Space Mono', monospace; font-size: 10px; color: var(--muted); text-align: right; }
   .sbar-bg { height: 5px; background: var(--bg3); border-radius: 3px; overflow: hidden; }
-  .sbar { height: 5px; border-radius: 3px; transition: width 0.3s; }
+  .sbar { height: 5px; border-radius: 3px; }
   .stat-v { font-family: 'Space Mono', monospace; font-size: 11px; color: var(--text); }
   .bst-total { margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; font-family: 'Space Mono', monospace; font-size: 12px; color: var(--muted); }
   .bst-total strong { color: var(--accent); }
   .owner-tag { margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--border); font-size: 12px; color: var(--muted); text-align: center; }
   .owner-tag strong { color: var(--text); }
 
-  /* Type color map */
-  .t-fire    { background: rgba(232,96,45,0.2); color: #f08060; }
-  .t-water   { background: rgba(80,150,220,0.2); color: #70a8f0; }
-  .t-grass   { background: rgba(80,190,100,0.2); color: #60d070; }
-  .t-electric{ background: rgba(240,200,50,0.2); color: #f0c832; }
-  .t-psychic { background: rgba(220,80,130,0.2); color: #e070a0; }
+  .t-fire    { background: rgba(232,96,45,0.2);  color: #f08060; }
+  .t-water   { background: rgba(80,150,220,0.2);  color: #70a8f0; }
+  .t-grass   { background: rgba(80,190,100,0.2);  color: #60d070; }
+  .t-electric{ background: rgba(240,200,50,0.2);  color: #f0c832; }
+  .t-psychic { background: rgba(220,80,130,0.2);  color: #e070a0; }
   .t-ice     { background: rgba(100,190,210,0.2); color: #70c8d8; }
-  .t-dragon  { background: rgba(100,80,210,0.2); color: #9080e0; }
-  .t-dark    { background: rgba(80,70,100,0.3); color: #a098b8; }
-  .t-fighting{ background: rgba(180,80,50,0.2); color: #d07060; }
-  .t-poison  { background: rgba(160,60,160,0.2); color: #c070c0; }
-  .t-ground  { background: rgba(200,160,80,0.2); color: #d0b060; }
+  .t-dragon  { background: rgba(100,80,210,0.2);  color: #9080e0; }
+  .t-dark    { background: rgba(80,70,100,0.3);   color: #a098b8; }
+  .t-fighting{ background: rgba(180,80,50,0.2);   color: #d07060; }
+  .t-poison  { background: rgba(160,60,160,0.2);  color: #c070c0; }
+  .t-ground  { background: rgba(200,160,80,0.2);  color: #d0b060; }
   .t-flying  { background: rgba(120,140,220,0.2); color: #90a8e8; }
-  .t-bug     { background: rgba(120,180,50,0.2); color: #90c840; }
-  .t-rock    { background: rgba(160,140,80,0.2); color: #c0a860; }
-  .t-ghost   { background: rgba(100,80,130,0.3); color: #9080b0; }
+  .t-bug     { background: rgba(120,180,50,0.2);  color: #90c840; }
+  .t-rock    { background: rgba(160,140,80,0.2);  color: #c0a860; }
+  .t-ghost   { background: rgba(100,80,130,0.3);  color: #9080b0; }
   .t-steel   { background: rgba(160,170,190,0.2); color: #a8b8c8; }
   .t-normal  { background: rgba(160,160,140,0.2); color: #b8b8a8; }
   .t-fairy   { background: rgba(220,130,180,0.2); color: #e090c0; }
 
+  .modal-stat-block { }
   .loading-msg { text-align: center; padding: 60px 0; color: var(--muted); font-family: 'Space Mono', monospace; font-size: 13px; }
-
-  @media (max-width: 600px) {
-    .all-grid { grid-template-columns: 1fr; }
-    .pokemon-grid { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); }
-  }
+  @media (max-width: 700px) { .sched-layout { grid-template-columns: 1fr; } .all-grid { grid-template-columns: 1fr; } .pokemon-grid { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); } }
 </style>
 </head>
 <body>
 <div class="wrap">
   <header>
-    <div class="header-inner">
-      <div>
-        <div class="league-badge">Draft League</div>
-        <h1>Pokémon <span>Draft</span></h1>
-      </div>
-      <div class="header-meta">
-        <div class="meta-chip"><div class="meta-dot"></div>Reg M-A · VGC Doubles</div>
-        <div class="meta-chip"><div class="meta-dot" style="background:#e070a0"></div>6 Teams · 11 Picks</div>
-        <div class="meta-chip"><div class="meta-dot" style="background:#9080e0"></div>Pokémon Scarlet/Violet</div>
-      </div>
-    </div>
+    <div class="league-badge">Draft League</div>
+    <h1>Siebert <span>Season 1</span></h1>
   </header>
-
   <nav class="nav-bar" id="nav"></nav>
   <div id="view"></div>
 </div>
 
 <script>
+// ── DATA ───────────────────────────────────────────────────────────────
 const TEAMS = {
-  overview: null,
-  all: null,
   eli:     { name:'Eli',     pokemon:['charizard-mega-y','starmie','venusaur','kingambit','espathra','zoroark-hisui','rotom-wash','kangaskhan','tinkaton','gallade','vivillon'] },
   jake:    { name:'Jake',    pokemon:['froslass','glimmora','gyarados','rotom-frost','talonflame','dragapult','scovillain','gardevoir','maushold','liepard','ceruledge'] },
   deshans: { name:'Deshans', pokemon:['sableye','golurk','lucario','oranguru','incineroar','hydrapple','primarina','aegislash','ninetales-alola','noivern','typhlosion-hisui'] },
   tim:     { name:'Tim',     pokemon:['garchomp','gengar','skarmory','whimsicott','farigiraf','rotom-heat','milotic','palafin','mamoswine','empoleon','excadrill'] },
   sam:     { name:'Sam',     pokemon:['dragonite','aerodactyl','blastoise','sneasler','tsareena','klefki','sylveon','arcanine-hisui','meowscarada','corviknight','weavile'] },
-  wyatt:   { name:'Wyatt',   pokemon:['tyranitar','scizor','slowbro','sinistcha','basculegion','archaludon','meowstic','pelipper','mimikyu','hydreigon','volcarona'] },
+  wyatt:   { name:'Wyatt',   pokemon:['tyranitar','scizor','slowbro','sinistcha','basculegion-male','archaludon','meowstic-male','pelipper','mimikyu','hydreigon','volcarona'] },
+};
+
+// Pokemon that need a different API slug than what we store
+const API_SLUG = {
+  'charizard-mega-y': 'charizard-mega-y',
+  'zoroark-hisui':    'zoroark-hisui',
+  'rotom-wash':       'rotom-wash',
+  'rotom-frost':      'rotom-frost',
+  'rotom-heat':       'rotom-heat',
+  'ninetales-alola':  'ninetales-alola',
+  'typhlosion-hisui': 'typhlosion-hisui',
+  'arcanine-hisui':   'arcanine-hisui',
+  'maushold':         'maushold',
+  'aegislash':        'aegislash-shield',
+  'palafin':          'palafin-zero',
+  'basculegion-male': 'basculegion-male',
+  'meowstic-male':    'meowstic-male',
+  'mimikyu':          'mimikyu-disguised',
 };
 
 const DISPLAY_NAMES = {
   'charizard-mega-y':'Charizard-Y','zoroark-hisui':'H-Zoroark','rotom-wash':'Rotom-W',
   'rotom-frost':'Rotom-F','rotom-heat':'Rotom-H','ninetales-alola':'A-Ninetales',
   'typhlosion-hisui':'H-Typhlosion','arcanine-hisui':'H-Arcanine','farigiraf':'Farigiraf',
-  'palafin':'Palafin','maushold':'Maushold','scovillain':'Scovillain',
-  'basculegion':'Basculegion','sinistcha':'Sinistcha','meowstic':'Meowstic',
+  'palafin':'Palafin','palafin-zero':'Palafin','maushold':'Maushold','scovillain':'Scovillain',
+  'basculegion-male':'Basculegion (M)','sinistcha':'Sinistcha','meowstic-male':'Meowstic (M)',
   'archaludon':'Archaludon','sneasler':'Sneasler','ceruledge':'Ceruledge',
   'hydrapple':'Hydrapple','meowscarada':'Meowscarada','corviknight':'Corviknight',
+  'mimikyu':'Mimikyu','mimikyu-disguised':'Mimikyu','aegislash':'Aegislash',
+  'aegislash-shield':'Aegislash',
 };
 
-function dn(n){ return DISPLAY_NAMES[n] || n.replace(/-/g,' ').replace(/\b\w/g,l=>l.toUpperCase()); }
+// Pokemon with Mega evolutions and their mega stat overrides
+const MEGAS = {
+  'charizard-mega-y': {
+    name: 'Mega Charizard Y',
+    apiSlug: 'charizard-mega-y',
+    types: ['fire','flying'],
+  },
+  'venusaur': {
+    name: 'Mega Venusaur',
+    apiSlug: 'venusaur-mega',
+    types: ['grass','poison'],
+  },
+  'kangaskhan': {
+    name: 'Mega Kangaskhan',
+    apiSlug: 'kangaskhan-mega',
+    types: ['normal'],
+  },
+  'gyarados': {
+    name: 'Mega Gyarados',
+    apiSlug: 'gyarados-mega',
+    types: ['water','dark'],
+  },
+  'gardevoir': {
+    name: 'Mega Gardevoir',
+    apiSlug: 'gardevoir-mega',
+    types: ['psychic','fairy'],
+  },
+  'lucario': {
+    name: 'Mega Lucario',
+    apiSlug: 'lucario-mega',
+    types: ['fighting','steel'],
+  },
+  'garchomp': {
+    name: 'Mega Garchomp',
+    apiSlug: 'garchomp-mega',
+    types: ['dragon','ground'],
+  },
+  'gengar': {
+    name: 'Mega Gengar',
+    apiSlug: 'gengar-mega',
+    types: ['ghost','poison'],
+  },
+  'blastoise': {
+    name: 'Mega Blastoise',
+    apiSlug: 'blastoise-mega',
+    types: ['water'],
+  },
+  'aerodactyl': {
+    name: 'Mega Aerodactyl',
+    apiSlug: 'aerodactyl-mega',
+    types: ['rock','flying'],
+  },
+  'scizor': {
+    name: 'Mega Scizor',
+    apiSlug: 'scizor-mega',
+    types: ['bug','steel'],
+  },
+  'slowbro': {
+    name: 'Mega Slowbro',
+    apiSlug: 'slowbro-mega',
+    types: ['water','psychic'],
+  },
+  'tyranitar': {
+    name: 'Mega Tyranitar',
+    apiSlug: 'tyranitar-mega',
+    types: ['rock','dark'],
+  },
+};
 
-const CACHE = {};
-let currentView = 'overview';
+// Pokemon that can mega — the key in TEAMS roster
+const CAN_MEGA = new Set(['charizard-mega-y','venusaur','kangaskhan','gyarados','gardevoir','lucario','garchomp','gengar','blastoise','aerodactyl','scizor','slowbro','tyranitar']);
 
-async function fetchPoke(name) {
-  if (CACHE[name]) return CACHE[name];
-  try {
-    const r = await fetch(`https://pokeapi.co/api/v2/pokemon/${name}`);
-    if (!r.ok) throw 0;
-    const d = await r.json();
-    CACHE[name] = { name:d.name, sprite:d.sprites.front_default, types:d.types.map(t=>t.type.name), stats:{hp:d.stats[0].base_stat,atk:d.stats[1].base_stat,def:d.stats[2].base_stat,spa:d.stats[3].base_stat,spd:d.stats[4].base_stat,spe:d.stats[5].base_stat} };
-  } catch { CACHE[name] = { name, sprite:null, types:[], stats:{hp:0,atk:0,def:0,spa:0,spd:0,spe:0} }; }
-  return CACHE[name];
+// Alternate forms (non-mega) — tab label → api slug
+const ALT_FORMS = {
+  'aegislash': [
+    { label: 'Shield', apiSlug: 'aegislash-shield' },
+    { label: 'Blade',  apiSlug: 'aegislash-blade'  },
+  ],
+  'palafin': [
+    { label: 'Zero', apiSlug: 'palafin-zero' },
+    { label: 'Hero', apiSlug: 'palafin-hero' },
+  ],
+};
+
+const SCHEDULE = [
+  { week:1, matches:[['Eli','Wyatt'],['Jake','Sam'],['Deshans','Tim']] },
+  { week:2, matches:[['Eli','Jake'],['Deshans','Wyatt'],['Tim','Sam']] },
+  { week:3, matches:[['Eli','Deshans'],['Jake','Tim'],['Sam','Wyatt']] },
+  { week:4, matches:[['Eli','Tim'],['Jake','Wyatt'],['Deshans','Sam']] },
+  { week:5, matches:[['Eli','Sam'],['Jake','Deshans'],['Tim','Wyatt']] },
+  { week:6, matches:[['Eli','Wyatt'],['Jake','Sam'],['Deshans','Tim']] },
+  { week:7, matches:[['Eli','Jake'],['Deshans','Wyatt'],['Tim','Sam']] },
+  { week:8, matches:[['Eli','Deshans'],['Jake','Tim'],['Sam','Wyatt']] },
+  { week:9, matches:[['Eli','Tim'],['Jake','Wyatt'],['Deshans','Sam']] },
+  { week:10,matches:[['Eli','Sam'],['Jake','Deshans'],['Tim','Wyatt']] },
+];
+
+// Results storage — edit this to add results: { 'week1-0': 'Eli', 'week1-1': 'Sam', ... }
+// key = weekN-matchIndex, value = winner name (or null for unplayed)
+const RESULTS = {};
+
+// ── TYPE CHART ─────────────────────────────────────────────────────────
+const TYPE_EFF = {
+  normal:   {rock:0.5,ghost:0,steel:0.5},
+  fire:     {fire:0.5,water:0.5,grass:2,ice:2,bug:2,rock:0.5,dragon:0.5,steel:2},
+  water:    {fire:2,water:0.5,grass:0.5,ground:2,rock:2,dragon:0.5},
+  electric: {water:2,electric:0.5,grass:0.5,ground:0,flying:2,dragon:0.5},
+  grass:    {fire:0.5,water:2,grass:0.5,poison:0.5,ground:2,flying:0.5,bug:0.5,rock:2,dragon:0.5,steel:0.5},
+  ice:      {fire:0.5,water:0.5,grass:2,ice:0.5,ground:2,flying:2,dragon:2,steel:0.5},
+  fighting: {normal:2,ice:2,poison:0.5,rock:2,bug:0.5,ghost:0,steel:2,psychic:0.5,flying:0.5,dark:2,fairy:0.5},
+  poison:   {grass:2,poison:0.5,ground:0.5,rock:0.5,ghost:0.5,steel:0,fairy:2},
+  ground:   {fire:2,electric:2,grass:0.5,poison:2,flying:0,bug:0.5,rock:2,steel:2,ice:0},
+  flying:   {electric:0.5,grass:2,fighting:2,bug:2,rock:0.5,steel:0.5,ground:0},
+  psychic:  {fighting:2,poison:2,psychic:0.5,dark:0,steel:0.5},
+  bug:      {fire:0.5,grass:2,fighting:0.5,poison:0.5,flying:0.5,ghost:0.5,steel:0.5,psychic:2,dark:2,fairy:0.5},
+  rock:     {fire:2,ice:2,fighting:0.5,ground:0.5,flying:2,bug:2,steel:0.5},
+  ghost:    {normal:0,fighting:0,poison:0.5,bug:0.5,ghost:2,dark:0.5},
+  dragon:   {dragon:2,steel:0.5,fairy:0},
+  dark:     {fighting:0.5,ghost:2,psychic:2,dark:0.5,fairy:0.5},
+  steel:    {fire:0.5,water:0.5,electric:0.5,ice:2,rock:2,steel:0.5,fairy:2,fighting:2,ground:2},
+  fairy:    {fire:0.5,fighting:2,poison:0.5,dragon:2,dark:2,steel:0.5},
+};
+
+function getDefenseChart(types) {
+  const mults = {};
+  const allTypes = Object.keys(TYPE_EFF);
+  allTypes.forEach(atk => {
+    let m = 1;
+    types.forEach(def => {
+      const eff = TYPE_EFF[atk] || {};
+      if (eff[def] !== undefined) m *= eff[def];
+    });
+    if (m !== 1) mults[atk] = m;
+  });
+  return mults;
 }
 
-function tpill(t){ return `<span class="type-pill t-${t}">${t}</span>`; }
-function bst(s){ return Object.values(s).reduce((a,b)=>a+b,0); }
-function scolor(v){ return v>=100?'#c8f053':v>=80?'#5f8cff':v>=60?'#f0c832':'#e05060'; }
+function getTeamDefChart(teamKey) {
+  const team = TEAMS[teamKey];
+  const combined = {};
+  team.pokemon.forEach(p => {
+    const d = CACHE[p];
+    if (!d) return;
+    const chart = getDefenseChart(d.types);
+    Object.entries(chart).forEach(([atk, m]) => {
+      combined[atk] = (combined[atk] || { immunes:0, resists:0, weaks:0, dblWeaks:0 });
+      if (m === 0) combined[atk].immunes++;
+      else if (m <= 0.5) combined[atk].resists++;
+      else if (m === 2) combined[atk].weaks++;
+      else if (m >= 4) combined[atk].dblWeaks++;
+    });
+  });
+  return combined;
+}
 
-function showModal(name) {
-  const d = CACHE[name]; if (!d) return;
+// ── CACHE & FETCH ──────────────────────────────────────────────────────
+const CACHE = {};
+
+async function fetchPoke(key) {
+  if (CACHE[key]) return CACHE[key];
+  const slug = API_SLUG[key] || key;
+  try {
+    const r = await fetch(`https://pokeapi.co/api/v2/pokemon/${slug}`);
+    if (!r.ok) throw 0;
+    const d = await r.json();
+    CACHE[key] = {
+      name: d.name, sprite: d.sprites.front_default,
+      types: d.types.map(t=>t.type.name),
+      stats: { hp:d.stats[0].base_stat, atk:d.stats[1].base_stat, def:d.stats[2].base_stat, spa:d.stats[3].base_stat, spd:d.stats[4].base_stat, spe:d.stats[5].base_stat }
+    };
+  } catch {
+    CACHE[key] = { name:key, sprite:null, types:[], stats:{hp:0,atk:0,def:0,spa:0,spd:0,spe:0} };
+  }
+  return CACHE[key];
+}
+
+async function fetchMega(key) {
+  const megaKey = 'mega_' + key;
+  if (CACHE[megaKey]) return CACHE[megaKey];
+  const mega = MEGAS[key];
+  if (!mega) return null;
+  try {
+    const r = await fetch(`https://pokeapi.co/api/v2/pokemon/${mega.apiSlug}`);
+    if (!r.ok) throw 0;
+    const d = await r.json();
+    CACHE[megaKey] = {
+      name: mega.name, sprite: d.sprites.front_default,
+      types: d.types.map(t=>t.type.name),
+      stats: { hp:d.stats[0].base_stat, atk:d.stats[1].base_stat, def:d.stats[2].base_stat, spa:d.stats[3].base_stat, spd:d.stats[4].base_stat, spe:d.stats[5].base_stat }
+    };
+  } catch { CACHE[megaKey] = null; }
+  return CACHE[megaKey];
+}
+
+async function fetchAltForms(key) {
+  const forms = ALT_FORMS[key];
+  if (!forms) return;
+  await Promise.allSettled(forms.map(async f => {
+    const cacheKey = `alt_${key}_${f.label}`;
+    if (CACHE[cacheKey]) return;
+    try {
+      const r = await fetch(`https://pokeapi.co/api/v2/pokemon/${f.apiSlug}`);
+      if (!r.ok) throw 0;
+      const d = await r.json();
+      CACHE[cacheKey] = {
+        name: d.name, sprite: d.sprites.front_default,
+        types: d.types.map(t=>t.type.name),
+        stats: { hp:d.stats[0].base_stat, atk:d.stats[1].base_stat, def:d.stats[2].base_stat, spa:d.stats[3].base_stat, spd:d.stats[4].base_stat, spe:d.stats[5].base_stat }
+      };
+    } catch { CACHE[`alt_${key}_${f.label}`] = null; }
+  }));
+}
+function dn(n) { return DISPLAY_NAMES[n] || n.replace(/-/g,' ').replace(/\b\w/g,l=>l.toUpperCase()); }
+function tpill(t) { return `<span class="type-pill t-${t}">${t}</span>`; }
+function bst(s) { return Object.values(s).reduce((a,b)=>a+b,0); }
+function scolor(v) { return v>=100?'#c8f053':v>=80?'#5f8cff':v>=60?'#f0c832':'#e05060'; }
+function serebiiSlug(key) {
+  const overrides = { 'charizard-mega-y':'charizardmegay','zoroark-hisui':'hisuianzoroark','rotom-wash':'rotomwash','rotom-frost':'rotomfrost','rotom-heat':'rotomheat','ninetales-alola':'alolanninetales','typhlosion-hisui':'hisuiantyphlosion','arcanine-hisui':'hisuianarcanine','maushold':'maushold','aegislash':'aegislash','palafin':'palafin','basculegion-male':'basculegion','meowstic-male':'meowstic','mimikyu':'mimikyu','archaludon':'archaludon','farigiraf':'farigiraf','sinistcha':'sinistcha','hydrapple':'hydrapple','scovillain':'scovillain','ceruledge':'ceruledge','meowscarada':'meowscarada','corviknight':'corviknight','sneasler':'sneasler' };
+  return overrides[key] || key.replace(/-/g,'');
+}
+function pikalyticsSlug(key) {
+  const overrides = { 'charizard-mega-y':'charizard-mega-y','zoroark-hisui':'hisuian-zoroark','ninetales-alola':'alolan-ninetales','typhlosion-hisui':'hisuian-typhlosion','arcanine-hisui':'hisuian-arcanine','rotom-wash':'rotom-wash','rotom-frost':'rotom-frost','rotom-heat':'rotom-heat','basculegion-male':'basculegion','meowstic-male':'meowstic','mimikyu':'mimikyu','aegislash':'aegislash','palafin':'palafin' };
+  return overrides[key] || key;
+}
+
+// ── STANDINGS ──────────────────────────────────────────────────────────
+function calcStandings() {
+  const stats = {};
+  Object.values(TEAMS).forEach(t => { stats[t.name] = { w:0, l:0, pts:0 }; });
+  SCHEDULE.forEach((wk,wi) => {
+    wk.matches.forEach((m,mi) => {
+      const winner = RESULTS[`week${wk.week}-${mi}`];
+      if (!winner) return;
+      const loser = m[0]===winner ? m[1] : m[0];
+      if (stats[winner]) { stats[winner].w++; stats[winner].pts += 3; }
+      if (stats[loser]) stats[loser].l++;
+    });
+  });
+  return Object.entries(stats).map(([name,s])=>({name,...s})).sort((a,b)=>b.pts-a.pts||b.w-a.w);
+}
+
+function currentWeek() {
+  // Find first week with any unplayed match
+  for (const wk of SCHEDULE) {
+    const anyUnplayed = wk.matches.some((_,mi)=>!RESULTS[`week${wk.week}-${mi}`]);
+    if (anyUnplayed) return wk.week;
+  }
+  return SCHEDULE.length;
+}
+
+// ── MODAL ──────────────────────────────────────────────────────────────
+function buildStatBlock(data, label) {
+  if (!data) return '';
+  const s = data.stats;
+  const total = bst(s);
+  const rows = [['HP',s.hp],['Atk',s.atk],['Def',s.def],['SpA',s.spa],['SpD',s.spd],['Spe',s.spe]]
+    .map(([k,v])=>`<div class="stat-item"><span class="stat-key">${k}</span><div class="sbar-bg"><div class="sbar" style="width:${Math.round(v/255*100)}%;background:${scolor(v)}"></div></div><span class="stat-v">${v}</span></div>`).join('');
+  return `<div class="modal-stat-block" id="stats-${label}" data-sprite="${data.sprite||''}" style="display:none">
+    <div style="display:flex;gap:6px;justify-content:center;margin-bottom:10px" id="types-${label}">
+      ${data.types.map(t=>tpill(t)).join('')}
+    </div>
+    ${rows}
+    <div class="bst-total"><span>BST</span><strong>${total}</strong></div>
+  </div>`;
+}
+
+function showModal(key) {
+  const d = CACHE[key]; if (!d) return;
   let owner = '';
   for (const [k,t] of Object.entries(TEAMS)) {
-    if (t && t.pokemon && t.pokemon.includes(name)) { owner = t.name; break; }
+    if (t.pokemon.includes(key)) { owner = t.name; break; }
   }
-  const s = d.stats;
-  const total = bst(s);
-  const rows = [['HP',s.hp],['Atk',s.atk],['Def',s.def],['SpA',s.spa],['SpD',s.spd],['Spe',s.spe]].map(([k,v])=>
-    `<div class="stat-item"><span class="stat-key">${k}</span><div class="sbar-bg"><div class="sbar" style="width:${Math.round(v/255*100)}%;background:${scolor(v)}"></div></div><span class="stat-v">${v}</span></div>`
-  ).join('');
+
+  const hasMega = CAN_MEGA.has(key) || key === 'charizard-mega-y';
+  const megaData = hasMega ? CACHE['mega_' + key] : null;
+  const altForms = ALT_FORMS[key] || null;
+
+  const serebii = `https://www.serebii.net/scarletviolet/pokemon/${serebiiSlug(key)}.shtml`;
+  const pikalytics = `https://www.pikalytics.com/pokedex/sv/${pikalyticsSlug(key)}`;
+
+  // Build tab config — always start with base (or first alt form)
+  let tabs = [];
+  let statBlocks = '';
+
+  if (altForms) {
+    // For alt-form pokemon (Aegislash, Palafin): show each form as a tab, no separate "base"
+    tabs = altForms.map(f => f.label);
+    statBlocks = altForms.map(f => {
+      const fd = CACHE[`alt_${key}_${f.label}`];
+      return buildStatBlock(fd, `alt_${f.label}`);
+    }).join('');
+  } else {
+    // Normal pokemon: Base tab, optional Mega tab
+    tabs = ['Base'];
+    statBlocks = buildStatBlock(d, 'base');
+    if (hasMega && megaData) {
+      tabs.push('Mega');
+      statBlocks += buildStatBlock(megaData, 'mega');
+    }
+  }
+
+  const firstTabId = altForms ? `alt_${altForms[0].label}` : 'base';
+  const tabHTML = tabs.length > 1 ? `<div class="stat-toggle" id="modal-tabs">
+    ${tabs.map((lbl,i) => {
+      const id = altForms ? `alt_${lbl}` : (lbl==='Base'?'base':'mega');
+      return `<button class="stat-tab${i===0?' active':''}" onclick="switchModalTab('${id}',this)">${lbl}</button>`;
+    }).join('')}
+  </div>` : '';
+
+  // Sprite: for alt forms show first form's sprite; for normal show base sprite
+  const displaySprite = altForms
+    ? (CACHE[`alt_${key}_${altForms[0].label}`]?.sprite || d.sprite)
+    : d.sprite;
+
   const el = document.createElement('div');
   el.className = 'modal-overlay';
   el.innerHTML = `<div class="modal">
     <button class="modal-close" onclick="this.closest('.modal-overlay').remove()">✕</button>
-    ${d.sprite?`<img class="modal-sprite" src="${d.sprite}" alt="${d.name}">`:''}
-    <div class="modal-name">${dn(name)}</div>
-    <div class="modal-types">${d.types.map(t=>tpill(t)).join('')}</div>
-    <div class="stat-section">${rows}</div>
-    <div class="bst-total"><span>Base stat total</span><strong>${total}</strong></div>
+    <img class="modal-sprite" id="modal-spr" src="${displaySprite||''}" alt="" ${displaySprite?'':'style="display:none"'}>
+    <div class="modal-name">${dn(key)}</div>
+    <div class="modal-links">
+      <a class="modal-link" href="${serebii}" target="_blank">Serebii ↗</a>
+      <a class="modal-link" href="${pikalytics}" target="_blank">Pikalytics ↗</a>
+    </div>
+    ${tabHTML}
+    ${statBlocks}
     <div class="owner-tag">Drafted by <strong>${owner}</strong></div>
   </div>`;
-  el.addEventListener('click', e => { if (e.target === el) el.remove(); });
+
+  // Show first tab
+  const firstBlock = el.querySelector(`#stats-${firstTabId}`);
+  if (firstBlock) firstBlock.style.display = 'block';
+
+  el.addEventListener('click', e => { if (e.target===el) el.remove(); });
   document.body.appendChild(el);
 }
 
+window.switchModalTab = function(tabId, btn) {
+  document.querySelectorAll('.modal .modal-stat-block').forEach(b => b.style.display='none');
+  document.querySelectorAll('#modal-tabs .stat-tab').forEach(b => b.classList.remove('active'));
+  const block = document.getElementById('stats-' + tabId);
+  if (block) block.style.display = 'block';
+  btn.classList.add('active');
+  // Swap sprite to match the selected form
+  const typesDiv = document.getElementById('types-' + tabId);
+  const spr = document.getElementById('modal-spr');
+  // Try to find sprite from the block's data — stored in data attr
+  if (spr && block) {
+    const sprSrc = block.dataset.sprite;
+    if (sprSrc) spr.src = sprSrc;
+  }
+};
+
+// ── RENDER FUNCTIONS ───────────────────────────────────────────────────
+let currentView = 'overview';
+let rosterSubView = {};
+
 function renderNav() {
-  const tabs = [['overview','Overview'],['all','All teams'],['eli','Eli'],['jake','Jake'],['deshans','Deshans'],['tim','Tim'],['sam','Sam'],['wyatt','Wyatt']];
+  const tabs = [['overview','Overview'],['schedule','Schedule'],['all','All teams'],['eli','Eli'],['jake','Jake'],['deshans','Deshans'],['tim','Tim'],['sam','Sam'],['wyatt','Wyatt']];
   document.getElementById('nav').innerHTML = tabs.map(([k,l])=>`<button class="nav-btn${currentView===k?' active':''}" onclick="setView('${k}')">${l}</button>`).join('');
 }
 
 function renderOverview() {
-  const cards = Object.entries(TEAMS).filter(([k])=>k!=='overview'&&k!=='all').map(([k,t])=>{
+  const standings = calcStandings();
+  const cards = Object.entries(TEAMS).map(([k,t])=>{
     const types = t.pokemon.flatMap(p=>CACHE[p]?.types||[]);
     const tc={};types.forEach(tp=>tc[tp]=(tc[tp]||0)+1);
-    const topT=Object.entries(tc).sort((a,b)=>b[1]-a[1]).slice(0,4).map(([tp])=>tpill(tp)).join('');
-    const avg=t.pokemon.length?Math.round(t.pokemon.reduce((s,p)=>{const d=CACHE[p];return s+(d?bst(d.stats):0);},0)/t.pokemon.length):'–';
+    const topT = Object.entries(tc).sort((a,b)=>b[1]-a[1]).slice(0,4).map(([tp])=>tpill(tp)).join('');
+    const avg = t.pokemon.length ? Math.round(t.pokemon.reduce((s,p)=>{const d=CACHE[p];return s+(d?bst(d.stats):0);},0)/t.pokemon.length) : '–';
+    const rec = standings.find(s=>s.name===t.name);
     return `<div class="overview-card" onclick="setView('${k}')">
       <div class="ov-name">${t.name}</div>
-      <div class="ov-count">11 pokémon</div>
+      <div class="ov-count" style="margin-bottom:4px">${rec?rec.w+'-'+rec.l:'0-0'}</div>
       <div class="ov-types">${topT}</div>
       <div class="ov-bst">avg BST <strong>${avg}</strong></div>
     </div>`;
@@ -243,44 +596,174 @@ function renderOverview() {
 
 function renderTeam(key) {
   const t = TEAMS[key];
-  const cards = t.pokemon.map(p=>{
-    const d=CACHE[p];
-    const sprite=d?.sprite?`<img class="poke-sprite" src="${d.sprite}" alt="">`:`<div class="poke-sprite-ph">◈</div>`;
-    const types=(d?.types||[]).map(tp=>tpill(tp)).join('');
-    const total=d?bst(d.stats):0;
-    return `<div class="poke-card" onclick="showModal('${p}')">${sprite}<div class="poke-name">${dn(p)}</div><div class="type-row">${types}</div><div class="bst-num">BST ${total}</div></div>`;
-  }).join('');
+  const sub = rosterSubView[key] || 'roster';
   document.getElementById('view').innerHTML = `
-    <div class="roster-header"><div class="roster-title">${t.name}'s Roster</div><div class="roster-hint">click card for stats ↗</div></div>
-    <div class="pokemon-grid">${cards}</div>`;
+    <div class="roster-header"><div class="roster-title">${t.name}'s Team</div><div class="roster-hint">click card for full stats ↗</div></div>
+    <div class="roster-sub-tabs">
+      <button class="sub-tab${sub==='roster'?' active':''}" onclick="setSubView('${key}','roster')">Roster</button>
+      <button class="sub-tab${sub==='typechart'?' active':''}" onclick="setSubView('${key}','typechart')">Type coverage</button>
+    </div>
+    <div id="sub-content"></div>`;
+  renderSubView(key, sub);
+}
+
+window.setSubView = function(key, sub) {
+  rosterSubView[key] = sub;
+  document.querySelectorAll('.sub-tab').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.sub-tab').forEach(b=>{ if(b.textContent.includes(sub==='roster'?'Roster':'Type')) b.classList.add('active'); });
+  renderSubView(key, sub);
+};
+
+function renderSubView(key, sub) {
+  const t = TEAMS[key];
+  const el = document.getElementById('sub-content');
+  if (sub === 'roster') {
+    const cards = t.pokemon.map(p=>{
+      const d = CACHE[p];
+      const sprite = d?.sprite ? `<img class="poke-sprite" src="${d.sprite}" alt="">` : `<div class="poke-sprite-ph">◈</div>`;
+      const types = (d?.types||[]).map(tp=>tpill(tp)).join('');
+      const total = d ? bst(d.stats) : 0;
+      const canM = CAN_MEGA.has(p);
+      return `<div class="poke-card" onclick="showModal('${p}')">
+        ${canM?'<div class="mega-badge">Mega</div>':''}
+        ${sprite}
+        <div class="poke-name">${dn(p)}</div>
+        <div class="type-row">${types}</div>
+        <div class="bst-num">BST ${total}</div>
+      </div>`;
+    }).join('');
+    el.innerHTML = `<div class="pokemon-grid">${cards}</div>`;
+  } else {
+    const chart = getTeamDefChart(key);
+    const allAtk = Object.keys(TYPE_EFF);
+    // Categorize
+    const immune=[], resist=[], neutral=[], weak=[], dblWeak=[];
+    allAtk.forEach(atk => {
+      let m = 1;
+      t.pokemon.forEach(p => {
+        const d = CACHE[p];
+        if (d) {
+          const eff = TYPE_EFF[atk]||{};
+          let pm = 1;
+          d.types.forEach(def => { if(eff[def]!==undefined) pm*=eff[def]; });
+          if (pm!==1) m; // just for team-wide chart, show aggregate
+        }
+      });
+      const agg = chart[atk];
+      if (!agg) return;
+      const score = (agg.immunes*3) + (agg.resists*1) - (agg.weaks*1) - (agg.dblWeaks*3);
+      if (score >= 6) immune.push({atk,agg,score});
+      else if (score >= 2) resist.push({atk,agg,score});
+      else if (score <= -6) dblWeak.push({atk,agg,score});
+      else if (score <= -2) weak.push({atk,agg,score});
+    });
+
+    function tcCell(atk, agg, cls) {
+      const parts = [];
+      if (agg.immunes) parts.push(`${agg.immunes}✕ immune`);
+      if (agg.resists) parts.push(`${agg.resists}✕ resists`);
+      if (agg.weaks) parts.push(`${agg.weaks}✕ weak`);
+      if (agg.dblWeaks) parts.push(`${agg.dblWeaks}✕ 4✕ weak`);
+      return `<div class="tc-cell ${cls}"><div class="tc-type">${atk}</div><div class="tc-note">${parts.join(', ')}</div></div>`;
+    }
+
+    let html = `<div class="type-chart-wrap">
+      <div class="tc-title">Team defensive coverage</div>
+      <div class="tc-sub">Based on the combined type matchups of all 11 Pokémon</div>`;
+    if (immune.length) { html += `<div class="tc-section-label">Strong resistances / immunities</div><div class="tc-grid">${immune.map(x=>tcCell(x.atk,x.agg,'tc-immune')).join('')}${resist.map(x=>tcCell(x.atk,x.agg,'tc-resist')).join('')}</div>`; }
+    if (weak.length||dblWeak.length) { html += `<div class="tc-section-label">Common weaknesses</div><div class="tc-grid">${dblWeak.map(x=>tcCell(x.atk,x.agg,'tc-dbl-weak')).join('')}${weak.map(x=>tcCell(x.atk,x.agg,'tc-weak')).join('')}</div>`; }
+    html += `</div>`;
+    el.innerHTML = html;
+  }
 }
 
 function renderAll() {
-  const blocks = Object.entries(TEAMS).filter(([k])=>k!=='overview'&&k!=='all').map(([key,t])=>{
+  const blocks = Object.entries(TEAMS).map(([key,t])=>{
     const rows = t.pokemon.map(p=>{
-      const d=CACHE[p];
-      const sprite=d?.sprite?`<img class="mini-sprite" src="${d.sprite}" alt="">`:`<div class="mini-sprite" style="display:flex;align-items:center;justify-content:center;opacity:0.3;font-size:18px">◈</div>`;
-      const types=(d?.types||[]).map(tp=>tpill(tp)).join('');
-      return `<div class="mini-row" onclick="showModal('${p}')" style="cursor:pointer">${sprite}<span class="mini-name">${dn(p)}</span><div class="mini-types">${types}</div></div>`;
+      const d = CACHE[p];
+      const sprite = d?.sprite ? `<img class="mini-sprite" src="${d.sprite}" alt="">` : `<div class="mini-sprite" style="display:flex;align-items:center;justify-content:center;opacity:0.3;font-size:18px">◈</div>`;
+      const types = (d?.types||[]).map(tp=>tpill(tp)).join('');
+      const canM = CAN_MEGA.has(p);
+      return `<div class="mini-row" onclick="showModal('${p}')">${sprite}<span class="mini-name">${dn(p)}${canM?' <span style="font-size:9px;color:var(--accent)">[M]</span>':''}</span><div class="mini-types">${types}</div></div>`;
     }).join('');
     return `<div class="all-block"><div class="all-block-name">${t.name}</div>${rows}</div>`;
   }).join('');
   document.getElementById('view').innerHTML = `<div class="all-grid">${blocks}</div>`;
 }
 
+function renderSchedule() {
+  const standings = calcStandings();
+  const cur = currentWeek();
+
+  const standingRows = standings.map((s,i)=>`
+    <div class="standings-row">
+      <div class="standings-rank">${i+1}</div>
+      <div class="standings-name">${s.name}</div>
+      <div class="standings-rec">${s.w}-${s.l}</div>
+      <div class="standings-pts">${s.pts}</div>
+    </div>`).join('');
+
+  const weeks = SCHEDULE.map(wk=>{
+    const isCurrent = wk.week === cur;
+    const matchRows = wk.matches.map((m,mi)=>{
+      const rk = `week${wk.week}-${mi}`;
+      const winner = RESULTS[rk];
+      let resultHtml = `<span class="match-result result-pending">vs</span>`;
+      if (winner) {
+        const t1win = winner===m[0];
+        resultHtml = `<span class="match-result">${t1win?'<span class="result-win">W</span>':'<span class="result-loss">L</span>'} / ${t1win?'<span class="result-loss">L</span>':'<span class="result-win">W</span>'}</span>`;
+      }
+      return `<div class="match-row">
+        <div class="match-team" style="${winner===m[0]?'color:var(--accent)':winner&&winner!==m[0]?'opacity:0.5':''}">
+          ${m[0]}
+        </div>
+        ${resultHtml}
+        <div class="match-team right" style="${winner===m[1]?'color:var(--accent)':winner&&winner!==m[1]?'opacity:0.5':''}">
+          ${m[1]}
+        </div>
+      </div>`;
+    }).join('');
+    return `<div class="week-block${isCurrent?' week-current':''}">
+      <div class="week-label">Week ${wk.week}${isCurrent?' · current':''}${wk.week<cur&&!SCHEDULE[wk.week-1]?.matches.every((_,mi)=>RESULTS[`week${wk.week}-${mi}`])?' · in progress':''}</div>
+      ${matchRows}
+    </div>`;
+  }).join('');
+
+  document.getElementById('view').innerHTML = `
+    <div class="sched-layout">
+      <div>${weeks}</div>
+      <div>
+        <div class="standings-box">
+          <div class="standings-title">Standings</div>
+          <div class="standings-row header">
+            <div></div><div>Team</div><div style="text-align:center">W-L</div><div style="text-align:center">Pts</div>
+          </div>
+          ${standingRows}
+        </div>
+      </div>
+    </div>`;
+}
+
 function setView(v) {
   currentView = v;
   renderNav();
   if (v==='overview') renderOverview();
+  else if (v==='schedule') renderSchedule();
   else if (v==='all') renderAll();
   else renderTeam(v);
 }
 
+// ── INIT ───────────────────────────────────────────────────────────────
 async function init() {
   document.getElementById('view').innerHTML = '<div class="loading-msg">Loading league data...</div>';
   renderNav();
-  const all = [...new Set(Object.values(TEAMS).filter(t=>t&&t.pokemon).flatMap(t=>t.pokemon))];
+  const all = [...new Set(Object.values(TEAMS).flatMap(t=>t.pokemon))];
+  // Fetch base pokemon
   await Promise.allSettled(all.map(p=>fetchPoke(p)));
+  // Fetch megas
+  await Promise.allSettled(all.filter(p=>CAN_MEGA.has(p)).map(p=>fetchMega(p)));
+  // Fetch alt forms (Aegislash, Palafin)
+  await Promise.allSettled(all.filter(p=>ALT_FORMS[p]).map(p=>fetchAltForms(p)));
   setView('overview');
 }
 
