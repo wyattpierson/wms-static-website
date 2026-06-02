@@ -159,6 +159,17 @@
   .t-fairy   { background: rgba(220,130,180,0.2); color: #e090c0; }
 
   .modal-stat-block { }
+
+  /* Type coverage bar chart */
+  .tc-bar-row { display: grid; grid-template-columns: 72px 1fr 36px; align-items: center; gap: 8px; padding: 5px 0; border-bottom: 1px solid var(--border); position: relative; cursor: pointer; border-radius: 4px; transition: background 0.1s; }
+  .tc-bar-row:last-child { border-bottom: none; }
+  .tc-bar-row:hover { background: rgba(255,255,255,0.03); }
+  .tc-bar-type { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; padding: 2px 7px; border-radius: 20px; text-align: center; }
+  .tc-bar-track { position: relative; height: 10px; background: var(--bg3); border-radius: 5px; overflow: hidden; }
+  .tc-bar-center { position: absolute; left: 50%; top: 0; width: 1px; height: 100%; background: var(--border2); z-index: 1; }
+  .tc-bar-score { font-family: 'Space Mono', monospace; font-size: 10px; text-align: right; font-weight: 700; }
+  .tc-tooltip { position: absolute; left: 80px; top: calc(100% + 4px); background: var(--bg2); border: 1px solid var(--border2); border-radius: 10px; padding: 10px 12px; z-index: 50; min-width: 200px; max-width: 320px; box-shadow: 0 8px 24px rgba(0,0,0,0.4); }
+
   .loading-msg { text-align: center; padding: 60px 0; color: var(--muted); font-family: 'Space Mono', monospace; font-size: 13px; }
   @media (max-width: 700px) { .sched-layout { grid-template-columns: 1fr; } .all-grid { grid-template-columns: 1fr; } .pokemon-grid { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); } }
 </style>
@@ -214,77 +225,52 @@ const DISPLAY_NAMES = {
   'aegislash-shield':'Aegislash',
 };
 
-// Pokemon with Mega evolutions and their mega stat overrides
+// Pokemon with Mega evolutions (Champions-verified)
+// apiSlug: use PokeAPI slug if available, null if Champions-only mega (hardcoded stats instead)
 const MEGAS = {
-  'charizard-mega-y': {
-    name: 'Mega Charizard Y',
-    apiSlug: 'charizard-mega-y',
-    types: ['fire','flying'],
-  },
-  'venusaur': {
-    name: 'Mega Venusaur',
-    apiSlug: 'venusaur-mega',
-    types: ['grass','poison'],
-  },
-  'kangaskhan': {
-    name: 'Mega Kangaskhan',
-    apiSlug: 'kangaskhan-mega',
-    types: ['normal'],
-  },
-  'gyarados': {
-    name: 'Mega Gyarados',
-    apiSlug: 'gyarados-mega',
-    types: ['water','dark'],
-  },
-  'gardevoir': {
-    name: 'Mega Gardevoir',
-    apiSlug: 'gardevoir-mega',
-    types: ['psychic','fairy'],
-  },
-  'lucario': {
-    name: 'Mega Lucario',
-    apiSlug: 'lucario-mega',
-    types: ['fighting','steel'],
-  },
-  'garchomp': {
-    name: 'Mega Garchomp',
-    apiSlug: 'garchomp-mega',
-    types: ['dragon','ground'],
-  },
-  'gengar': {
-    name: 'Mega Gengar',
-    apiSlug: 'gengar-mega',
-    types: ['ghost','poison'],
-  },
-  'blastoise': {
-    name: 'Mega Blastoise',
-    apiSlug: 'blastoise-mega',
-    types: ['water'],
-  },
-  'aerodactyl': {
-    name: 'Mega Aerodactyl',
-    apiSlug: 'aerodactyl-mega',
-    types: ['rock','flying'],
-  },
-  'scizor': {
-    name: 'Mega Scizor',
-    apiSlug: 'scizor-mega',
-    types: ['bug','steel'],
-  },
-  'slowbro': {
-    name: 'Mega Slowbro',
-    apiSlug: 'slowbro-mega',
-    types: ['water','psychic'],
-  },
-  'tyranitar': {
-    name: 'Mega Tyranitar',
-    apiSlug: 'tyranitar-mega',
-    types: ['rock','dark'],
-  },
+  // ── Eli ──
+  'charizard-mega-y': { name:'Mega Charizard Y', apiSlug:'charizard-mega-y', types:['fire','flying'] },
+  'venusaur':         { name:'Mega Venusaur',    apiSlug:'venusaur-mega',     types:['grass','poison'] },
+  'kangaskhan':       { name:'Mega Kangaskhan',  apiSlug:'kangaskhan-mega',   types:['normal'] },
+  'gallade':          { name:'Mega Gallade',     apiSlug:'gallade-mega',      types:['psychic','fighting'] },
+  'starmie':          { name:'Mega Starmie',     apiSlug:null,                types:['water','psychic'],
+                        hardStats:{hp:60,atk:100,def:105,spa:130,spd:105,spe:120} },
+  // ── Jake ──
+  'froslass':         { name:'Mega Froslass',    apiSlug:null,                types:['ice','ghost'],
+                        hardStats:{hp:70,atk:80,def:70,spa:140,spd:100,spe:120} },
+  'glimmora':         { name:'Mega Glimmora',    apiSlug:null,                types:['rock','poison'],
+                        hardStats:{hp:83,atk:90,def:105,spa:130,spd:96,spe:100} },
+  'gyarados':         { name:'Mega Gyarados',    apiSlug:'gyarados-mega',     types:['water','dark'] },
+  'gardevoir':        { name:'Mega Gardevoir',   apiSlug:'gardevoir-mega',    types:['psychic','fairy'] },
+  'scovillain':       { name:'Mega Scovillain',  apiSlug:null,                types:['grass','fire'],
+                        hardStats:{hp:65,atk:118,def:85,spa:118,spd:85,spe:85} },
+  // ── Deshans ──
+  'sableye':          { name:'Mega Sableye',     apiSlug:'sableye-mega',      types:['dark','ghost'] },
+  'golurk':           { name:'Mega Golurk',      apiSlug:null,                types:['ground','ghost'],
+                        hardStats:{hp:89,atk:139,def:105,spa:70,spd:105,spe:55} },
+  'lucario':          { name:'Mega Lucario',     apiSlug:'lucario-mega',      types:['fighting','steel'] },
+  // ── Tim ──
+  'garchomp':         { name:'Mega Garchomp',    apiSlug:'garchomp-mega',     types:['dragon','ground'] },
+  'gengar':           { name:'Mega Gengar',      apiSlug:'gengar-mega',       types:['ghost','poison'] },
+  'skarmory':         { name:'Mega Skarmory',    apiSlug:null,                types:['steel','flying'],
+                        hardStats:{hp:65,atk:140,def:110,spa:40,spd:100,spe:110} },
+  'excadrill':        { name:'Mega Excadrill',   apiSlug:null,                types:['ground','steel'],
+                        hardStats:{hp:110,atk:165,def:100,spa:65,spd:65,spe:103} },
+  // ── Sam ──
+  'dragonite':        { name:'Mega Dragonite',   apiSlug:null,                types:['dragon','flying'],
+                        hardStats:{hp:91,atk:124,def:115,spa:145,spd:125,spe:100} },
+  'aerodactyl':       { name:'Mega Aerodactyl',  apiSlug:'aerodactyl-mega',   types:['rock','flying'] },
+  'blastoise':        { name:'Mega Blastoise',   apiSlug:'blastoise-mega',    types:['water'] },
+  // ── Wyatt ──
+  'tyranitar':        { name:'Mega Tyranitar',   apiSlug:'tyranitar-mega',    types:['rock','dark'] },
+  'scizor':           { name:'Mega Scizor',      apiSlug:'scizor-mega',       types:['bug','steel'] },
+  'slowbro':          { name:'Mega Slowbro',     apiSlug:'slowbro-mega',      types:['water','psychic'] },
+  'meowstic-male':    { name:'Mega Meowstic',    apiSlug:null,                types:['psychic'],
+                        hardStats:{hp:74,atk:64,def:88,spa:130,spd:100,spe:110} },
 };
 
-// Pokemon that can mega — the key in TEAMS roster
-const CAN_MEGA = new Set(['charizard-mega-y','venusaur','kangaskhan','gyarados','gardevoir','lucario','garchomp','gengar','blastoise','aerodactyl','scizor','slowbro','tyranitar']);
+// Pokemon that can mega — keys used in TEAMS rosters
+const CAN_MEGA = new Set(Object.keys(MEGAS));
 
 // Alternate forms (non-mega) — tab label → api slug
 const ALT_FORMS = {
@@ -395,6 +381,18 @@ async function fetchMega(key) {
   if (CACHE[megaKey]) return CACHE[megaKey];
   const mega = MEGAS[key];
   if (!mega) return null;
+
+  // Champions-only mega: no PokeAPI entry, use hardcoded stats
+  if (!mega.apiSlug || mega.hardStats) {
+    CACHE[megaKey] = {
+      name: mega.name,
+      sprite: null, // no sprite available from PokeAPI
+      types: mega.types,
+      stats: mega.hardStats || {hp:0,atk:0,def:0,spa:0,spd:0,spe:0}
+    };
+    return CACHE[megaKey];
+  }
+
   try {
     const r = await fetch(`https://pokeapi.co/api/v2/pokemon/${mega.apiSlug}`);
     if (!r.ok) throw 0;
@@ -431,12 +429,44 @@ function tpill(t) { return `<span class="type-pill t-${t}">${t}</span>`; }
 function bst(s) { return Object.values(s).reduce((a,b)=>a+b,0); }
 function scolor(v) { return v>=100?'#c8f053':v>=80?'#5f8cff':v>=60?'#f0c832':'#e05060'; }
 function serebiiSlug(key) {
-  const overrides = { 'charizard-mega-y':'charizardmegay','zoroark-hisui':'hisuianzoroark','rotom-wash':'rotomwash','rotom-frost':'rotomfrost','rotom-heat':'rotomheat','ninetales-alola':'alolanninetales','typhlosion-hisui':'hisuiantyphlosion','arcanine-hisui':'hisuianarcanine','maushold':'maushold','aegislash':'aegislash','palafin':'palafin','basculegion-male':'basculegion','meowstic-male':'meowstic','mimikyu':'mimikyu','archaludon':'archaludon','farigiraf':'farigiraf','sinistcha':'sinistcha','hydrapple':'hydrapple','scovillain':'scovillain','ceruledge':'ceruledge','meowscarada':'meowscarada','corviknight':'corviknight','sneasler':'sneasler' };
-  return overrides[key] || key.replace(/-/g,'');
+  // Champions dex: https://www.serebii.net/pokedex-champions/pokemonname/
+  const overrides = {
+    'charizard-mega-y':'charizard','zoroark-hisui':'hisuian-zoroark',
+    'rotom-wash':'rotom-wash','rotom-frost':'rotom-frost','rotom-heat':'rotom-heat',
+    'ninetales-alola':'alolan-ninetales','typhlosion-hisui':'hisuian-typhlosion',
+    'arcanine-hisui':'hisuian-arcanine','maushold':'maushold','aegislash':'aegislash',
+    'palafin':'palafin','basculegion-male':'basculegion','meowstic-male':'meowstic',
+    'mimikyu':'mimikyu','archaludon':'archaludon','farigiraf':'farigiraf',
+    'sinistcha':'sinistcha','hydrapple':'hydrapple','scovillain':'scovillain',
+    'ceruledge':'ceruledge','meowscarada':'meowscarada','corviknight':'corviknight',
+    'sneasler':'sneasler','gallade':'gallade','starmie':'starmie','froslass':'froslass',
+    'glimmora':'glimmora','gyarados':'gyarados','gardevoir':'gardevoir','sableye':'sableye',
+    'golurk':'golurk','lucario':'lucario','garchomp':'garchomp','gengar':'gengar',
+    'skarmory':'skarmory','excadrill':'excadrill','dragonite':'dragonite',
+    'aerodactyl':'aerodactyl','blastoise':'blastoise','tyranitar':'tyranitar',
+    'scizor':'scizor','slowbro':'slowbro',
+  };
+  const slug = overrides[key] || key.replace(/-/g,'');
+  return `https://www.serebii.net/pokedex-champions/${slug}/`;
 }
-function pikalyticsSlug(key) {
-  const overrides = { 'charizard-mega-y':'charizard-mega-y','zoroark-hisui':'hisuian-zoroark','ninetales-alola':'alolan-ninetales','typhlosion-hisui':'hisuian-typhlosion','arcanine-hisui':'hisuian-arcanine','rotom-wash':'rotom-wash','rotom-frost':'rotom-frost','rotom-heat':'rotom-heat','basculegion-male':'basculegion','meowstic-male':'meowstic','mimikyu':'mimikyu','aegislash':'aegislash','palafin':'palafin' };
-  return overrides[key] || key;
+function pikalyticsUrl(key) {
+  // Champions pokedex: https://www.pikalytics.com/pokedex/championspreview/PokemonName
+  const overrides = {
+    'charizard-mega-y':'Charizard-Mega-Y','zoroark-hisui':'Hisuian-Zoroark',
+    'ninetales-alola':'Alolan-Ninetales','typhlosion-hisui':'Hisuian-Typhlosion',
+    'arcanine-hisui':'Hisuian-Arcanine','rotom-wash':'Rotom-Wash',
+    'rotom-frost':'Rotom-Frost','rotom-heat':'Rotom-Heat',
+    'basculegion-male':'Basculegion','meowstic-male':'Meowstic',
+    'mimikyu':'Mimikyu','aegislash':'Aegislash','palafin':'Palafin',
+    'froslass':'Froslass','glimmora':'Glimmora','scovillain':'Scovillain',
+    'gallade':'Gallade','starmie':'Starmie','sableye':'Sableye','golurk':'Golurk',
+    'skarmory':'Skarmory','excadrill':'Excadrill','dragonite':'Dragonite',
+    'meowscarada':'Meowscarada','corviknight':'Corviknight','sneasler':'Sneasler',
+    'archaludon':'Archaludon','farigiraf':'Farigiraf','sinistcha':'Sinistcha',
+    'hydrapple':'Hydrapple','ceruledge':'Ceruledge',
+  };
+  const name = overrides[key] || key.replace(/-/g,'').replace(/\b\w/g,l=>l.toUpperCase());
+  return `https://www.pikalytics.com/pokedex/championspreview/${name}`;
 }
 
 // ── STANDINGS ──────────────────────────────────────────────────────────
@@ -491,8 +521,8 @@ function showModal(key) {
   const megaData = hasMega ? CACHE['mega_' + key] : null;
   const altForms = ALT_FORMS[key] || null;
 
-  const serebii = `https://www.serebii.net/scarletviolet/pokemon/${serebiiSlug(key)}.shtml`;
-  const pikalytics = `https://www.pikalytics.com/pokedex/sv/${pikalyticsSlug(key)}`;
+  const serebii = serebiiSlug(key);
+  const pikalytics = pikalyticsUrl(key);
 
   // Build tab config — always start with base (or first alt form)
   let tabs = [];
@@ -567,7 +597,33 @@ window.switchModalTab = function(tabId, btn) {
   }
 };
 
-// ── RENDER FUNCTIONS ───────────────────────────────────────────────────
+// ── TYPE CHART TOOLTIP ─────────────────────────────────────────────────
+let _tcOpenId = null;
+window.showTcTooltip = function(e, id) {
+  // Only show on desktop hover (not touch)
+  if (window.matchMedia('(hover: none)').matches) return;
+  hideTcTooltip();
+  const el = document.getElementById(id);
+  if (el) { el.style.display = 'block'; _tcOpenId = id; }
+};
+window.hideTcTooltip = function() {
+  if (_tcOpenId) {
+    const el = document.getElementById(_tcOpenId);
+    if (el) el.style.display = 'none';
+    _tcOpenId = null;
+  }
+};
+window.toggleTcTooltip = function(e, id) {
+  e.stopPropagation();
+  const el = document.getElementById(id);
+  if (!el) return;
+  const isOpen = el.style.display !== 'none';
+  hideTcTooltip();
+  if (!isOpen) { el.style.display = 'block'; _tcOpenId = id; }
+};
+document.addEventListener('click', () => hideTcTooltip());
+
+
 let currentView = 'overview';
 let rosterSubView = {};
 
@@ -634,46 +690,87 @@ function renderSubView(key, sub) {
     }).join('');
     el.innerHTML = `<div class="pokemon-grid">${cards}</div>`;
   } else {
-    const chart = getTeamDefChart(key);
-    const allAtk = Object.keys(TYPE_EFF);
-    // Categorize
-    const immune=[], resist=[], neutral=[], weak=[], dblWeak=[];
-    allAtk.forEach(atk => {
-      let m = 1;
-      t.pokemon.forEach(p => {
-        const d = CACHE[p];
-        if (d) {
-          const eff = TYPE_EFF[atk]||{};
-          let pm = 1;
-          d.types.forEach(def => { if(eff[def]!==undefined) pm*=eff[def]; });
-          if (pm!==1) m; // just for team-wide chart, show aggregate
-        }
-      });
-      const agg = chart[atk];
-      if (!agg) return;
-      const score = (agg.immunes*3) + (agg.resists*1) - (agg.weaks*1) - (agg.dblWeaks*3);
-      if (score >= 6) immune.push({atk,agg,score});
-      else if (score >= 2) resist.push({atk,agg,score});
-      else if (score <= -6) dblWeak.push({atk,agg,score});
-      else if (score <= -2) weak.push({atk,agg,score});
-    });
+    // ── TYPE COVERAGE BAR CHART ─────────────────────────────────────
+    const ALL_TYPES = ['normal','fire','water','electric','grass','ice','fighting','poison','ground','flying','psychic','bug','rock','ghost','dragon','dark','steel','fairy'];
 
-    function tcCell(atk, agg, cls) {
-      const parts = [];
-      if (agg.immunes) parts.push(`${agg.immunes}✕ immune`);
-      if (agg.resists) parts.push(`${agg.resists}✕ resists`);
-      if (agg.weaks) parts.push(`${agg.weaks}✕ weak`);
-      if (agg.dblWeaks) parts.push(`${agg.dblWeaks}✕ 4✕ weak`);
-      return `<div class="tc-cell ${cls}"><div class="tc-type">${atk}</div><div class="tc-note">${parts.join(', ')}</div></div>`;
+    // For each attacking type, compute per-pokemon effectiveness and net score
+    const typeData = ALL_TYPES.map(atk => {
+      const perPoke = t.pokemon.map(p => {
+        const d = CACHE[p]; if (!d || !d.types.length) return {p, mult:1};
+        const eff = TYPE_EFF[atk] || {};
+        let m = 1;
+        d.types.forEach(def => { if (eff[def] !== undefined) m *= eff[def]; });
+        return {p, mult:m};
+      });
+      const immunes   = perPoke.filter(x=>x.mult===0);
+      const dblResist = perPoke.filter(x=>x.mult===0.25);
+      const resists   = perPoke.filter(x=>x.mult===0.5);
+      const neutral   = perPoke.filter(x=>x.mult===1);
+      const weaks     = perPoke.filter(x=>x.mult===2);
+      const dblWeaks  = perPoke.filter(x=>x.mult===4);
+      // Score: positive = team resists well, negative = team is weak
+      const score = immunes.length*3 + dblResist.length*2 + resists.length*1
+                  - weaks.length*1 - dblWeaks.length*2;
+      return { atk, score, immunes, dblResist, resists, neutral, weaks, dblWeaks };
+    }).sort((a,b) => b.score - a.score);
+
+    const maxAbs = Math.max(...typeData.map(x=>Math.abs(x.score)), 1);
+
+    function spriteRow(arr, label, color) {
+      if (!arr.length) return '';
+      const icons = arr.map(({p}) => {
+        const d = CACHE[p];
+        return d?.sprite
+          ? `<img src="${d.sprite}" title="${dn(p)}" style="width:28px;height:28px;image-rendering:pixelated;cursor:pointer" onclick="event.stopPropagation();showModal('${p}')">`
+          : `<span style="font-size:10px;color:var(--muted)">${dn(p)}</span>`;
+      }).join('');
+      return `<div style="display:flex;align-items:center;gap:6px;margin-bottom:3px">
+        <span style="font-size:9px;color:${color};width:54px;flex-shrink:0;text-align:right">${label}</span>
+        <div style="display:flex;gap:2px;flex-wrap:wrap">${icons}</div>
+      </div>`;
     }
 
-    let html = `<div class="type-chart-wrap">
-      <div class="tc-title">Team defensive coverage</div>
-      <div class="tc-sub">Based on the combined type matchups of all 11 Pokémon</div>`;
-    if (immune.length) { html += `<div class="tc-section-label">Strong resistances / immunities</div><div class="tc-grid">${immune.map(x=>tcCell(x.atk,x.agg,'tc-immune')).join('')}${resist.map(x=>tcCell(x.atk,x.agg,'tc-resist')).join('')}</div>`; }
-    if (weak.length||dblWeak.length) { html += `<div class="tc-section-label">Common weaknesses</div><div class="tc-grid">${dblWeak.map(x=>tcCell(x.atk,x.agg,'tc-dbl-weak')).join('')}${weak.map(x=>tcCell(x.atk,x.agg,'tc-weak')).join('')}</div>`; }
-    html += `</div>`;
-    el.innerHTML = html;
+    const rows = typeData.map(({atk,score,immunes,dblResist,resists,neutral,weaks,dblWeaks}) => {
+      const pct = Math.round(Math.abs(score)/maxAbs*100);
+      const isGood = score >= 0;
+      const barColor = score > 3 ? '#1D9E75' : score > 0 ? '#5f8cff' : score < -3 ? '#E24B4A' : '#f0c832';
+      const barStyle = isGood
+        ? `width:${pct}%;background:${barColor};height:100%;border-radius:0 3px 3px 0;`
+        : `width:${pct}%;background:${barColor};height:100%;border-radius:3px 0 0 3px;margin-left:auto;`;
+
+      // Tooltip content (shown on hover)
+      const tooltipContent = [
+        spriteRow(immunes,   '0× immune',  '#c0b0e0'),
+        spriteRow(dblResist, '¼× resist',  '#60d070'),
+        spriteRow(resists,   '½× resist',  '#70a8f0'),
+        spriteRow(weaks,     '2× weak',    '#f0c832'),
+        spriteRow(dblWeaks,  '4× weak',    '#f08060'),
+      ].filter(Boolean).join('');
+
+      const scoreLabel = score === 0 ? '±0' : (score > 0 ? '+' : '') + score;
+
+      return `<div class="tc-bar-row" onmouseenter="showTcTooltip(event,'tc-tip-${atk}')" onmouseleave="hideTcTooltip()" onclick="toggleTcTooltip(event,'tc-tip-${atk}')">
+        <div class="tc-bar-type t-${atk}">${atk}</div>
+        <div class="tc-bar-track">
+          <div class="tc-bar-center"></div>
+          <div style="position:absolute;top:0;${isGood?'left:50%':'right:50%'};width:${Math.round(pct/2)}%;height:100%;background:${barColor};border-radius:${isGood?'0 3px 3px 0':'3px 0 0 3px'}"></div>
+        </div>
+        <div class="tc-bar-score" style="color:${barColor}">${scoreLabel}</div>
+        <div class="tc-tooltip" id="tc-tip-${atk}" style="display:none">
+          ${tooltipContent || '<span style="font-size:11px;color:var(--muted)">All neutral</span>'}
+        </div>
+      </div>`;
+    }).join('');
+
+    el.innerHTML = `
+      <div class="type-chart-wrap">
+        <div class="tc-title">Defensive type coverage</div>
+        <div class="tc-sub">Positive score = team resists this type. Hover or tap a row to see which Pokémon are affected.</div>
+        <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--muted);font-family:'Space Mono',monospace;margin-bottom:8px;padding:0 56px 0 72px">
+          <span>← more weak</span><span>more resistant →</span>
+        </div>
+        ${rows}
+      </div>`;
   }
 }
 
