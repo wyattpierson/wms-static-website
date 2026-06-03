@@ -138,6 +138,12 @@
   .bst-total strong { color: var(--accent); }
   .owner-tag { margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--border); font-size: 12px; color: var(--muted); text-align: center; }
   .owner-tag strong { color: var(--text); }
+  .abilities-section { margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--border); }
+  .abilities-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); font-family: 'Space Mono', monospace; margin-bottom: 8px; }
+  .ability-row { margin-bottom: 8px; }
+  .ability-name { font-size: 12px; font-weight: 600; color: var(--text); display: flex; align-items: center; gap: 6px; margin-bottom: 2px; }
+  .ability-hidden-tag { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; background: rgba(95,140,255,0.15); color: var(--accent2); border: 1px solid rgba(95,140,255,0.3); border-radius: 3px; padding: 1px 5px; }
+  .ability-desc { font-size: 11px; color: var(--muted); line-height: 1.5; }
 
   .t-fire    { background: rgba(232,96,45,0.2);  color: #f08060; }
   .t-water   { background: rgba(80,150,220,0.2);  color: #70a8f0; }
@@ -197,7 +203,7 @@ const TEAMS = {
 
 // Pokemon that need a different API slug than what we store
 const API_SLUG = {
-  'charizard-mega-y': 'charizard-mega-y',
+  'charizard-mega-y': 'charizard',
   'zoroark-hisui':    'zoroark-hisui',
   'rotom-wash':       'rotom-wash',
   'rotom-frost':      'rotom-frost',
@@ -205,7 +211,7 @@ const API_SLUG = {
   'ninetales-alola':  'ninetales-alola',
   'typhlosion-hisui': 'typhlosion-hisui',
   'arcanine-hisui':   'arcanine-hisui',
-  'maushold':         'maushold',
+  'maushold':         'maushold-four',
   'aegislash':        'aegislash-shield',
   'palafin':          'palafin-zero',
   'basculegion-male': 'basculegion-male',
@@ -229,7 +235,8 @@ const DISPLAY_NAMES = {
 // apiSlug: use PokeAPI slug if available, null if Champions-only mega (hardcoded stats instead)
 const MEGAS = {
   // ── Eli ──
-  'charizard-mega-y': { name:'Mega Charizard Y', apiSlug:'charizard-mega-y', types:['fire','flying'] },
+  'charizard-mega-y': { name:'Mega Charizard Y', apiSlug:null, types:['fire','flying'],
+                        hardStats:{hp:78,atk:104,def:78,spa:159,spd:115,spe:100} },
   'venusaur':         { name:'Mega Venusaur',    apiSlug:'venusaur-mega',     types:['grass','poison'] },
   'kangaskhan':       { name:'Mega Kangaskhan',  apiSlug:'kangaskhan-mega',   types:['normal'] },
   'gallade':          { name:'Mega Gallade',     apiSlug:'gallade-mega',      types:['psychic','fighting'] },
@@ -365,13 +372,30 @@ async function fetchPoke(key) {
     const r = await fetch(`https://pokeapi.co/api/v2/pokemon/${slug}`);
     if (!r.ok) throw 0;
     const d = await r.json();
+    // Fetch ability descriptions in parallel
+    const abilityData = await Promise.all(
+      d.abilities.map(async a => {
+        try {
+          const ar = await fetch(a.ability.url);
+          const ad = await ar.json();
+          const engEntry = ad.effect_entries.find(e=>e.language.name==='en');
+          const shortEntry = ad.flavor_text_entries?.filter(e=>e.language.name==='en').pop();
+          return {
+            name: a.ability.name.replace(/-/g,' ').replace(/\b\w/g,l=>l.toUpperCase()),
+            isHidden: a.is_hidden,
+            desc: engEntry?.short_effect || shortEntry?.flavor_text || 'No description available.'
+          };
+        } catch { return { name: a.ability.name, isHidden: a.is_hidden, desc: '' }; }
+      })
+    );
     CACHE[key] = {
       name: d.name, sprite: d.sprites.front_default,
       types: d.types.map(t=>t.type.name),
-      stats: { hp:d.stats[0].base_stat, atk:d.stats[1].base_stat, def:d.stats[2].base_stat, spa:d.stats[3].base_stat, spd:d.stats[4].base_stat, spe:d.stats[5].base_stat }
+      stats: { hp:d.stats[0].base_stat, atk:d.stats[1].base_stat, def:d.stats[2].base_stat, spa:d.stats[3].base_stat, spd:d.stats[4].base_stat, spe:d.stats[5].base_stat },
+      abilities: abilityData,
     };
   } catch {
-    CACHE[key] = { name:key, sprite:null, types:[], stats:{hp:0,atk:0,def:0,spa:0,spd:0,spe:0} };
+    CACHE[key] = { name:key, sprite:null, types:[], stats:{hp:0,atk:0,def:0,spa:0,spd:0,spe:0}, abilities:[] };
   }
   return CACHE[key];
 }
@@ -570,6 +594,16 @@ function showModal(key) {
     </div>
     ${tabHTML}
     ${statBlocks}
+    ${(() => {
+      const abilities = d.abilities || [];
+      if (!abilities.length) return '';
+      const rows = abilities.map(a => `
+        <div class="ability-row">
+          <div class="ability-name">${a.name}${a.isHidden?'<span class="ability-hidden-tag">Hidden</span>':''}</div>
+          ${a.desc ? `<div class="ability-desc">${a.desc}</div>` : ''}
+        </div>`).join('');
+      return `<div class="abilities-section"><div class="abilities-label">Abilities</div>${rows}</div>`;
+    })()}
     <div class="owner-tag">Drafted by <strong>${owner}</strong></div>
   </div>`;
 
@@ -647,7 +681,33 @@ function renderOverview() {
       <div class="ov-bst">avg BST <strong>${avg}</strong></div>
     </div>`;
   }).join('');
-  document.getElementById('view').innerHTML = `<div class="overview-grid">${cards}</div>`;
+  const cur = currentWeek();
+  const curWeekData = SCHEDULE.find(w => w.week === cur);
+  let weekSection = '';
+  if (curWeekData) {
+    const matchRows = curWeekData.matches.map((m, mi) => {
+      const rk = `week${cur}-${mi}`;
+      const winner = RESULTS[rk];
+      const t1win = winner === m[0], t2win = winner === m[1];
+      const vsOrResult = winner
+        ? `<span style="font-family:'Space Mono',monospace;font-size:11px;color:var(--muted)">●</span>`
+        : `<span style="font-family:'Space Mono',monospace;font-size:10px;color:var(--muted)">vs</span>`;
+      return `<div class="match-row">
+        <div class="match-team" style="cursor:pointer;${t1win?'color:var(--accent)':t2win?'opacity:0.45':''}" onclick="setView('${m[0].toLowerCase()}')">${m[0]}</div>
+        ${vsOrResult}
+        <div class="match-team right" style="cursor:pointer;${t2win?'color:var(--accent)':t1win?'opacity:0.45':''}" onclick="setView('${m[1].toLowerCase()}')">${m[1]}</div>
+      </div>`;
+    }).join('');
+    weekSection = `
+      <div style="margin-top:28px">
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);font-family:'Space Mono',monospace;margin-bottom:12px">
+          Week ${cur} · Current matchups
+        </div>
+        <div class="week-block week-current" style="max-width:460px">${matchRows}</div>
+      </div>`;
+  }
+
+  document.getElementById('view').innerHTML = `<div class="overview-grid">${cards}</div>${weekSection}`;
 }
 
 function renderTeam(key) {
