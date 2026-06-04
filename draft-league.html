@@ -211,7 +211,7 @@ const API_SLUG = {
   'ninetales-alola':  'ninetales-alola',
   'typhlosion-hisui': 'typhlosion-hisui',
   'arcanine-hisui':   'arcanine-hisui',
-  'maushold':         'maushold-four',
+  'maushold':         'maushold-family-of-four',
   'aegislash':        'aegislash-shield',
   'palafin':          'palafin-zero',
   'basculegion-male': 'basculegion-male',
@@ -236,44 +236,68 @@ const DISPLAY_NAMES = {
 const MEGAS = {
   // ── Eli ──
   'charizard-mega-y': { name:'Mega Charizard Y', apiSlug:null, types:['fire','flying'],
-                        hardStats:{hp:78,atk:104,def:78,spa:159,spd:115,spe:100} },
-  'venusaur':         { name:'Mega Venusaur',    apiSlug:'venusaur-mega',     types:['grass','poison'] },
-  'kangaskhan':       { name:'Mega Kangaskhan',  apiSlug:'kangaskhan-mega',   types:['normal'] },
-  'gallade':          { name:'Mega Gallade',     apiSlug:'gallade-mega',      types:['psychic','fighting'] },
+                        hardStats:{hp:78,atk:104,def:78,spa:159,spd:115,spe:100},
+                        abilities:[{name:'Drought',isHidden:false,desc:'Summons harsh sunlight for 5 turns when the Pokémon enters battle. Boosts Fire moves and weakens Water moves.'}] },
+  'venusaur':         { name:'Mega Venusaur',    apiSlug:'venusaur-mega',     types:['grass','poison'],
+                        abilities:[{name:'Thick Fat',isHidden:false,desc:'Fire- and Ice-type moves deal only ½ damage to this Pokémon.'}] },
+  'kangaskhan':       { name:'Mega Kangaskhan',  apiSlug:'kangaskhan-mega',   types:['normal'],
+                        abilities:[{name:'Parental Bond',isHidden:false,desc:'The Pokémon attacks twice each turn. The second hit deals 25% damage.'}] },
+  'gallade':          { name:'Mega Gallade',     apiSlug:'gallade-mega',      types:['psychic','fighting'],
+                        abilities:[{name:'Inner Focus',isHidden:false,desc:'Prevents flinching. Also protects against Intimidate.'}] },
   'starmie':          { name:'Mega Starmie',     apiSlug:null,                types:['water','psychic'],
-                        hardStats:{hp:60,atk:100,def:105,spa:130,spd:105,spe:120} },
+                        hardStats:{hp:60,atk:100,def:105,spa:130,spd:105,spe:120},
+                        abilities:[{name:'Huge Power',isHidden:false,desc:'Doubles the Pokémon\'s Attack stat.'}] },
   // ── Jake ──
   'froslass':         { name:'Mega Froslass',    apiSlug:null,                types:['ice','ghost'],
-                        hardStats:{hp:70,atk:80,def:70,spa:140,spd:100,spe:120} },
+                        hardStats:{hp:70,atk:80,def:70,spa:140,spd:100,spe:120},
+                        abilities:[{name:'Ice Warning',isHidden:false,desc:'Summons Hail for 5 turns when the Pokémon enters battle.'}] },
   'glimmora':         { name:'Mega Glimmora',    apiSlug:null,                types:['rock','poison'],
-                        hardStats:{hp:83,atk:90,def:105,spa:130,spd:96,spe:100} },
-  'gyarados':         { name:'Mega Gyarados',    apiSlug:'gyarados-mega',     types:['water','dark'] },
-  'gardevoir':        { name:'Mega Gardevoir',   apiSlug:'gardevoir-mega',    types:['psychic','fairy'] },
+                        hardStats:{hp:83,atk:90,def:105,spa:130,spd:96,spe:100},
+                        abilities:[{name:'Adaptability',isHidden:false,desc:'Powers up moves of the same type as the Pokémon from 1.5× to 2×.'}] },
+  'gyarados':         { name:'Mega Gyarados',    apiSlug:'gyarados-mega',     types:['water','dark'],
+                        abilities:[{name:'Mold Breaker',isHidden:false,desc:'Moves ignore abilities that hinder or prevent them.'}] },
+  'gardevoir':        { name:'Mega Gardevoir',   apiSlug:'gardevoir-mega',    types:['psychic','fairy'],
+                        abilities:[{name:'Pixilate',isHidden:false,desc:'Normal-type moves become Fairy-type and deal 20% more damage.'}] },
   'scovillain':       { name:'Mega Scovillain',  apiSlug:null,                types:['grass','fire'],
-                        hardStats:{hp:65,atk:118,def:85,spa:118,spd:85,spe:85} },
+                        hardStats:{hp:65,atk:118,def:85,spa:118,spd:85,spe:85},
+                        abilities:[{name:'Spicy Spray',isHidden:false,desc:'On entry, lowers the Speed of all adjacent opponents.'}] },
   // ── Deshans ──
-  'sableye':          { name:'Mega Sableye',     apiSlug:'sableye-mega',      types:['dark','ghost'] },
+  'sableye':          { name:'Mega Sableye',     apiSlug:'sableye-mega',      types:['dark','ghost'],
+                        abilities:[{name:'Magic Bounce',isHidden:false,desc:'Reflects status moves back at the user.'}] },
   'golurk':           { name:'Mega Golurk',      apiSlug:null,                types:['ground','ghost'],
-                        hardStats:{hp:89,atk:139,def:105,spa:70,spd:105,spe:55} },
-  'lucario':          { name:'Mega Lucario',     apiSlug:'lucario-mega',      types:['fighting','steel'] },
+                        hardStats:{hp:89,atk:139,def:105,spa:70,spd:105,spe:55},
+                        abilities:[{name:'Unseen Fist',isHidden:false,desc:'Contact moves bypass Protect and similar effects.'}] },
+  'lucario':          { name:'Mega Lucario',     apiSlug:'lucario-mega',      types:['fighting','steel'],
+                        abilities:[{name:'Adaptability',isHidden:false,desc:'Powers up moves of the same type as the Pokémon from 1.5× to 2×.'}] },
   // ── Tim ──
-  'garchomp':         { name:'Mega Garchomp',    apiSlug:'garchomp-mega',     types:['dragon','ground'] },
-  'gengar':           { name:'Mega Gengar',      apiSlug:'gengar-mega',       types:['ghost','poison'] },
+  'garchomp':         { name:'Mega Garchomp',    apiSlug:'garchomp-mega',     types:['dragon','ground'],
+                        abilities:[{name:'Sand Force',isHidden:false,desc:'In a sandstorm, Rock-, Ground-, and Steel-type moves deal 30% more damage.'}] },
+  'gengar':           { name:'Mega Gengar',      apiSlug:'gengar-mega',       types:['ghost','poison'],
+                        abilities:[{name:'Shadow Tag',isHidden:false,desc:'Prevents opposing Pokémon from switching out or fleeing.'}] },
   'skarmory':         { name:'Mega Skarmory',    apiSlug:null,                types:['steel','flying'],
-                        hardStats:{hp:65,atk:140,def:110,spa:40,spd:100,spe:110} },
+                        hardStats:{hp:65,atk:140,def:110,spa:40,spd:100,spe:110},
+                        abilities:[{name:'Stalwart',isHidden:false,desc:'Ignores moves and abilities that would redirect this Pokémon\'s moves to another target.'}] },
   'excadrill':        { name:'Mega Excadrill',   apiSlug:null,                types:['ground','steel'],
-                        hardStats:{hp:110,atk:165,def:100,spa:65,spd:65,spe:103} },
+                        hardStats:{hp:110,atk:165,def:100,spa:65,spd:65,spe:103},
+                        abilities:[{name:'Piercing Drill',isHidden:false,desc:'Contact moves also pierce through the target\'s Defense boosts.'}] },
   // ── Sam ──
   'dragonite':        { name:'Mega Dragonite',   apiSlug:null,                types:['dragon','flying'],
-                        hardStats:{hp:91,atk:124,def:115,spa:145,spd:125,spe:100} },
-  'aerodactyl':       { name:'Mega Aerodactyl',  apiSlug:'aerodactyl-mega',   types:['rock','flying'] },
-  'blastoise':        { name:'Mega Blastoise',   apiSlug:'blastoise-mega',    types:['water'] },
+                        hardStats:{hp:91,atk:124,def:115,spa:145,spd:125,spe:100},
+                        abilities:[{name:'Multiscale',isHidden:false,desc:'Reduces damage taken by 50% when at full HP.'}] },
+  'aerodactyl':       { name:'Mega Aerodactyl',  apiSlug:'aerodactyl-mega',   types:['rock','flying'],
+                        abilities:[{name:'Tough Claws',isHidden:false,desc:'Boosts the power of contact moves by 30%.'}] },
+  'blastoise':        { name:'Mega Blastoise',   apiSlug:'blastoise-mega',    types:['water'],
+                        abilities:[{name:'Mega Launcher',isHidden:false,desc:'Powers up aura and pulse moves by 50%.'}] },
   // ── Wyatt ──
-  'tyranitar':        { name:'Mega Tyranitar',   apiSlug:'tyranitar-mega',    types:['rock','dark'] },
-  'scizor':           { name:'Mega Scizor',      apiSlug:'scizor-mega',       types:['bug','steel'] },
-  'slowbro':          { name:'Mega Slowbro',     apiSlug:'slowbro-mega',      types:['water','psychic'] },
+  'tyranitar':        { name:'Mega Tyranitar',   apiSlug:'tyranitar-mega',    types:['rock','dark'],
+                        abilities:[{name:'Sand Stream',isHidden:false,desc:'Summons a sandstorm for 5 turns when the Pokémon enters battle.'}] },
+  'scizor':           { name:'Mega Scizor',      apiSlug:'scizor-mega',       types:['bug','steel'],
+                        abilities:[{name:'Technician',isHidden:false,desc:'Moves with 60 BP or less deal 50% more damage.'}] },
+  'slowbro':          { name:'Mega Slowbro',     apiSlug:'slowbro-mega',      types:['water','psychic'],
+                        abilities:[{name:'Shell Armor',isHidden:false,desc:'Protects the Pokémon from critical hits.'}] },
   'meowstic-male':    { name:'Mega Meowstic',    apiSlug:null,                types:['psychic'],
-                        hardStats:{hp:74,atk:64,def:88,spa:130,spd:100,spe:110} },
+                        hardStats:{hp:74,atk:64,def:88,spa:130,spd:100,spe:110},
+                        abilities:[{name:'Trace',isHidden:false,desc:'Copies the ability of one of the opposing Pokémon on entry.'}] },
 };
 
 // Pokemon that can mega — keys used in TEAMS rosters
@@ -406,27 +430,37 @@ async function fetchMega(key) {
   const mega = MEGAS[key];
   if (!mega) return null;
 
-  // Champions-only mega: no PokeAPI entry, use hardcoded stats
+  // Champions-only mega or Charizard-Y (same slug as base): use hardcoded data entirely
   if (!mega.apiSlug || mega.hardStats) {
     CACHE[megaKey] = {
       name: mega.name,
-      sprite: null, // no sprite available from PokeAPI
+      sprite: null,
       types: mega.types,
-      stats: mega.hardStats || {hp:0,atk:0,def:0,spa:0,spd:0,spe:0}
+      stats: mega.hardStats || {hp:0,atk:0,def:0,spa:0,spd:0,spe:0},
+      abilities: mega.abilities || [],
     };
     return CACHE[megaKey];
   }
 
+  // Has a real PokeAPI slug — fetch sprite + stats, but use our hardcoded abilities
   try {
     const r = await fetch(`https://pokeapi.co/api/v2/pokemon/${mega.apiSlug}`);
     if (!r.ok) throw 0;
     const d = await r.json();
     CACHE[megaKey] = {
-      name: mega.name, sprite: d.sprites.front_default,
+      name: mega.name,
+      sprite: d.sprites.front_default,
       types: d.types.map(t=>t.type.name),
-      stats: { hp:d.stats[0].base_stat, atk:d.stats[1].base_stat, def:d.stats[2].base_stat, spa:d.stats[3].base_stat, spd:d.stats[4].base_stat, spe:d.stats[5].base_stat }
+      stats: { hp:d.stats[0].base_stat, atk:d.stats[1].base_stat, def:d.stats[2].base_stat, spa:d.stats[3].base_stat, spd:d.stats[4].base_stat, spe:d.stats[5].base_stat },
+      abilities: mega.abilities || [],
     };
-  } catch { CACHE[megaKey] = null; }
+  } catch {
+    CACHE[megaKey] = {
+      name: mega.name, sprite: null, types: mega.types,
+      stats: mega.hardStats || {hp:0,atk:0,def:0,spa:0,spd:0,spe:0},
+      abilities: mega.abilities || [],
+    };
+  }
   return CACHE[megaKey];
 }
 
@@ -519,6 +553,16 @@ function currentWeek() {
 }
 
 // ── MODAL ──────────────────────────────────────────────────────────────
+function buildAbilitiesHTML(abilities) {
+  if (!abilities || !abilities.length) return '';
+  const rows = abilities.map(a => `
+    <div class="ability-row">
+      <div class="ability-name">${a.name}${a.isHidden?'<span class="ability-hidden-tag">Hidden</span>':''}</div>
+      ${a.desc ? `<div class="ability-desc">${a.desc}</div>` : ''}
+    </div>`).join('');
+  return `<div class="abilities-section"><div class="abilities-label">Abilities</div>${rows}</div>`;
+}
+
 function buildStatBlock(data, label) {
   if (!data) return '';
   const s = data.stats;
@@ -531,6 +575,7 @@ function buildStatBlock(data, label) {
     </div>
     ${rows}
     <div class="bst-total"><span>BST</span><strong>${total}</strong></div>
+    ${buildAbilitiesHTML(data.abilities)}
   </div>`;
 }
 
@@ -548,19 +593,16 @@ function showModal(key) {
   const serebii = serebiiSlug(key);
   const pikalytics = pikalyticsUrl(key);
 
-  // Build tab config — always start with base (or first alt form)
   let tabs = [];
   let statBlocks = '';
 
   if (altForms) {
-    // For alt-form pokemon (Aegislash, Palafin): show each form as a tab, no separate "base"
     tabs = altForms.map(f => f.label);
     statBlocks = altForms.map(f => {
       const fd = CACHE[`alt_${key}_${f.label}`];
       return buildStatBlock(fd, `alt_${f.label}`);
     }).join('');
   } else {
-    // Normal pokemon: Base tab, optional Mega tab
     tabs = ['Base'];
     statBlocks = buildStatBlock(d, 'base');
     if (hasMega && megaData) {
@@ -577,7 +619,6 @@ function showModal(key) {
     }).join('')}
   </div>` : '';
 
-  // Sprite: for alt forms show first form's sprite; for normal show base sprite
   const displaySprite = altForms
     ? (CACHE[`alt_${key}_${altForms[0].label}`]?.sprite || d.sprite)
     : d.sprite;
@@ -594,20 +635,9 @@ function showModal(key) {
     </div>
     ${tabHTML}
     ${statBlocks}
-    ${(() => {
-      const abilities = d.abilities || [];
-      if (!abilities.length) return '';
-      const rows = abilities.map(a => `
-        <div class="ability-row">
-          <div class="ability-name">${a.name}${a.isHidden?'<span class="ability-hidden-tag">Hidden</span>':''}</div>
-          ${a.desc ? `<div class="ability-desc">${a.desc}</div>` : ''}
-        </div>`).join('');
-      return `<div class="abilities-section"><div class="abilities-label">Abilities</div>${rows}</div>`;
-    })()}
     <div class="owner-tag">Drafted by <strong>${owner}</strong></div>
   </div>`;
 
-  // Show first tab
   const firstBlock = el.querySelector(`#stats-${firstTabId}`);
   if (firstBlock) firstBlock.style.display = 'block';
 
