@@ -166,6 +166,18 @@
 
   .modal-stat-block { }
 
+  /* Trainer info */
+  .trainer-card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--card-r); padding: 20px; margin-bottom: 16px; display: flex; align-items: flex-start; gap: 20px; flex-wrap: wrap; }
+  .trainer-avatar { width: 48px; height: 48px; border-radius: 50%; background: var(--bg3); border: 1px solid var(--border2); display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+  .trainer-main { flex: 1; min-width: 0; }
+  .trainer-team-name { font-size: 18px; font-weight: 600; color: var(--text); line-height: 1.2; }
+  .trainer-owner-label { font-size: 12px; color: var(--muted); margin-top: 2px; margin-bottom: 10px; }
+  .trainer-ids { display: flex; gap: 8px; flex-wrap: wrap; }
+  .trainer-id-chip { background: var(--bg3); border: 1px solid var(--border); border-radius: 6px; padding: 5px 10px; }
+  .trainer-id-label { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); font-family: 'Space Mono', monospace; margin-bottom: 2px; }
+  .trainer-id-val { font-size: 12px; font-family: 'Space Mono', monospace; color: var(--text); }
+  .trainer-id-missing { font-size: 11px; font-family: 'Space Mono', monospace; color: var(--muted); font-style: italic; }
+
   /* Type coverage bar chart */
   .tc-bar-row { display: grid; grid-template-columns: 72px 1fr 36px; align-items: center; gap: 8px; padding: 5px 0; border-bottom: 1px solid var(--border); position: relative; cursor: pointer; border-radius: 4px; transition: background 0.1s; }
   .tc-bar-row:last-child { border-bottom: none; }
@@ -193,12 +205,21 @@
 <script>
 // ── DATA ───────────────────────────────────────────────────────────────
 const TEAMS = {
-  eli:     { name:'Eli',     pokemon:['charizard-mega-y','starmie','venusaur','kingambit','espathra','zoroark-hisui','rotom-wash','kangaskhan','tinkaton','gallade','vivillon'] },
-  jake:    { name:'Jake',    pokemon:['froslass','glimmora','gyarados','rotom-frost','talonflame','dragapult','scovillain','gardevoir','maushold','liepard','ceruledge'] },
-  deshans: { name:'Deshans', pokemon:['sableye','golurk','lucario','oranguru','incineroar','hydrapple','primarina','aegislash','ninetales-alola','noivern','typhlosion-hisui'] },
-  tim:     { name:'Tim',     pokemon:['garchomp','gengar','skarmory','whimsicott','farigiraf','rotom-heat','milotic','palafin','mamoswine','empoleon','excadrill'] },
-  sam:     { name:'Sam',     pokemon:['dragonite','aerodactyl','blastoise','sneasler','tsareena','klefki','sylveon','arcanine-hisui','meowscarada','corviknight','weavile'] },
-  wyatt:   { name:'Wyatt',   pokemon:['tyranitar','scizor','slowbro','sinistcha','basculegion-male','archaludon','meowstic-male','pelipper','mimikyu','hydreigon','volcarona'] },
+  eli:     { name:'Eli',     teamName:"Eli's Team",            pokemon:['charizard-mega-y','starmie','venusaur','kingambit','espathra','zoroark-hisui','rotom-wash','kangaskhan','tinkaton','gallade','vivillon'] },
+  jake:    { name:'Jake',   teamName:"Jake's Team",            pokemon:['froslass','glimmora','gyarados','rotom-frost','talonflame','dragapult','scovillain','gardevoir','maushold','liepard','ceruledge'] },
+  deshans: { name:'Deshans',teamName:"Deshans' Team",          pokemon:['sableye','golurk','lucario','oranguru','incineroar','hydrapple','primarina','aegislash','ninetales-alola','noivern','typhlosion-hisui'] },
+  tim:     { name:'Tim',    teamName:"Tim's Team",             pokemon:['garchomp','gengar','skarmory','whimsicott','farigiraf','rotom-heat','milotic','palafin','mamoswine','empoleon','excadrill'] },
+  sam:     { name:'Sam',    teamName:"Sam's Team",             pokemon:['dragonite','aerodactyl','blastoise','sneasler','tsareena','klefki','sylveon','arcanine-hisui','meowscarada','corviknight','weavile'] },
+  wyatt:   { name:'Wyatt',  teamName:'Sage Town Slows',        pokemon:['tyranitar','scizor','slowbro','sinistcha','basculegion-male','archaludon','meowstic-male','pelipper','mimikyu','hydreigon','volcarona'] },
+};
+
+const TRAINERS = {
+  eli:     { name:'Eli',     championsId:'7609 7098 9181', switchId:'SW-1254-5136-0241' },
+  jake:    { name:'Jake',    championsId:null, switchId:null },
+  deshans: { name:'Deshans', championsId:null, switchId:null },
+  tim:     { name:'Tim',     championsId:null, switchId:null },
+  sam:     { name:'Sam',     championsId:'4234 1744 6458', switchId:'SW-1425-0854-2900' },
+  wyatt:   { name:'Wyatt',   championsId:'0853 7544 9900', switchId:'SW-0753-1737-4306' },
 };
 
 // Pokemon that need a different API slug than what we store
@@ -704,9 +725,11 @@ function renderOverview() {
     const topT = Object.entries(tc).sort((a,b)=>b[1]-a[1]).slice(0,4).map(([tp])=>tpill(tp)).join('');
     const avg = t.pokemon.length ? Math.round(t.pokemon.reduce((s,p)=>{const d=CACHE[p];return s+(d?bst(d.stats):0);},0)/t.pokemon.length) : '–';
     const rec = standings.find(s=>s.name===t.name);
+    const isCustomName = t.teamName !== `${t.name}'s Team` && t.teamName !== `${t.name}' Team`;
     return `<div class="overview-card" onclick="setView('${k}')">
-      <div class="ov-name">${t.name}</div>
-      <div class="ov-count" style="margin-bottom:4px">${rec?rec.w+'-'+rec.l:'0-0'}</div>
+      <div class="ov-name">${t.teamName}</div>
+      ${isCustomName ? `<div style="font-size:11px;color:var(--muted);margin-bottom:2px">${t.name}</div>` : ''}
+      <div class="ov-count" style="margin-bottom:8px">${rec?rec.w+'-'+rec.l:'0-0'}</div>
       <div class="ov-types">${topT}</div>
       <div class="ov-bst">avg BST <strong>${avg}</strong></div>
     </div>`;
@@ -743,12 +766,34 @@ function renderOverview() {
 function renderTeam(key) {
   const t = TEAMS[key];
   const sub = rosterSubView[key] || 'roster';
+  const trainer = TRAINERS[key] || {};
+  const isCustomName = t.teamName !== `${t.name}'s Team` && t.teamName !== `${t.name}' Team`;
+
+  function idChip(label, val) {
+    return `<div class="trainer-id-chip">
+      <div class="trainer-id-label">${label}</div>
+      ${val
+        ? `<div class="trainer-id-val">${val}</div>`
+        : `<div class="trainer-id-missing">Not set</div>`}
+    </div>`;
+  }
+
   document.getElementById('view').innerHTML = `
-    <div class="roster-header"><div class="roster-title">${t.name}'s Team</div><div class="roster-hint">click card for full stats ↗</div></div>
-    <div class="roster-sub-tabs">
+    <div class="trainer-card">
+      <div class="trainer-avatar">🎮</div>
+      <div class="trainer-main">
+        <div class="trainer-team-name">${t.teamName}</div>
+        ${isCustomName ? `<div class="trainer-owner-label">Owner: ${t.name}</div>` : `<div class="trainer-owner-label">${t.name}</div>`}
+        <div class="trainer-ids">
+          ${idChip('Champions ID', trainer.championsId)}
+          ${idChip('Switch ID', trainer.switchId)}
+        </div>
+      </div>
+    </div>
+    <div class="roster-header" style="margin-top:0"><div style="display:flex;gap:6px">
       <button class="sub-tab${sub==='roster'?' active':''}" onclick="setSubView('${key}','roster')">Roster</button>
       <button class="sub-tab${sub==='typechart'?' active':''}" onclick="setSubView('${key}','typechart')">Type coverage</button>
-    </div>
+    </div><div class="roster-hint">click card for full stats ↗</div></div>
     <div id="sub-content"></div>`;
   renderSubView(key, sub);
 }
@@ -873,7 +918,11 @@ function renderAll() {
       const canM = CAN_MEGA.has(p);
       return `<div class="mini-row" onclick="showModal('${p}')">${sprite}<span class="mini-name">${dn(p)}${canM?' <span style="font-size:9px;color:var(--accent)">[M]</span>':''}</span><div class="mini-types">${types}</div></div>`;
     }).join('');
-    return `<div class="all-block"><div class="all-block-name">${t.name}</div>${rows}</div>`;
+    const isCustomName = t.teamName !== `${t.name}'s Team` && t.teamName !== `${t.name}' Team`;
+    return `<div class="all-block">
+      <div class="all-block-name">${t.teamName}${isCustomName?`<span style="font-weight:400;color:var(--muted);font-size:11px;margin-left:6px">${t.name}</span>`:''}</div>
+      ${rows}
+    </div>`;
   }).join('');
   document.getElementById('view').innerHTML = `<div class="all-grid">${blocks}</div>`;
 }
@@ -882,13 +931,20 @@ function renderSchedule() {
   const standings = calcStandings();
   const cur = currentWeek();
 
-  const standingRows = standings.map((s,i)=>`
-    <div class="standings-row">
+  const standingRows = standings.map((s,i)=>{
+    const teamKey = Object.keys(TEAMS).find(k=>TEAMS[k].name===s.name);
+    const teamName = teamKey ? TEAMS[teamKey].teamName : s.name;
+    const isCustom = teamName !== `${s.name}'s Team` && teamName !== `${s.name}' Team`;
+    return `<div class="standings-row">
       <div class="standings-rank">${i+1}</div>
-      <div class="standings-name">${s.name}</div>
+      <div class="standings-name" style="cursor:pointer" onclick="setView('${teamKey||s.name.toLowerCase()}')">
+        <div>${teamName}</div>
+        ${isCustom?`<div style="font-size:10px;color:var(--muted)">${s.name}</div>`:''}
+      </div>
       <div class="standings-rec">${s.w}-${s.l}</div>
       <div class="standings-pts">${s.pts}</div>
-    </div>`).join('');
+    </div>`;
+  }).join('');
 
   const weeks = SCHEDULE.map(wk=>{
     const isCurrent = wk.week === cur;
