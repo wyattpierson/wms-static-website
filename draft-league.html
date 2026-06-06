@@ -112,6 +112,12 @@
   .result-win { color: var(--accent); }
   .result-loss { color: #e05060; }
   .result-pending { color: var(--muted); }
+  .match-lineup-row { display: grid; grid-template-columns: 1fr 60px 1fr; gap: 8px; padding: 0 0 10px; border-bottom: 1px solid var(--border); margin-top: -2px; }
+  .match-lineup-row:last-child { border-bottom: none; }
+  .lineup-sprites { display: flex; gap: 0; flex-wrap: nowrap; }
+  .lineup-sprites.right { justify-content: flex-end; }
+  .lineup-sprite { width: 32px; height: 32px; image-rendering: pixelated; cursor: pointer; transition: transform 0.1s; }
+  .lineup-sprite:hover { transform: scale(1.3); z-index: 2; position: relative; }
   .week-current .week-label { color: var(--accent); }
   .week-current { border-color: rgba(200,240,83,0.25); }
 
@@ -206,20 +212,20 @@
 // ── DATA ───────────────────────────────────────────────────────────────
 const TEAMS = {
   eli:     { name:'Eli',     teamName:"Eli's Team",            pokemon:['charizard-mega-y','starmie','venusaur','kingambit','espathra','zoroark-hisui','rotom-wash','kangaskhan','tinkaton','gallade','vivillon'] },
-  jake:    { name:'Jake',   teamName:"Jake's Team",            pokemon:['froslass','glimmora','gyarados','rotom-frost','talonflame','dragapult','scovillain','gardevoir','maushold','liepard','ceruledge'] },
+  jake:    { name:'Jake',   teamName:"Motor City Mausholds",            pokemon:['froslass','glimmora','gyarados','rotom-frost','talonflame','dragapult','scovillain','gardevoir','maushold','liepard','ceruledge'] },
   deshans: { name:'Deshans',teamName:"Deshans' Team",          pokemon:['sableye','golurk','lucario','oranguru','incineroar','hydrapple','primarina','aegislash','ninetales-alola','noivern','typhlosion-hisui'] },
-  tim:     { name:'Tim',    teamName:"Tim's Team",             pokemon:['garchomp','gengar','skarmory','whimsicott','farigiraf','rotom-heat','milotic','palafin','mamoswine','empoleon','excadrill'] },
+  tim:     { name:'Tim',    teamName:"Taipei Taiphlosions",             pokemon:['garchomp','gengar','skarmory','whimsicott','farigiraf','rotom-heat','milotic','palafin','mamoswine','empoleon','excadrill'] },
   sam:     { name:'Sam',    teamName:"Big Apple Hydrapples", pokemon:['dragonite','aerodactyl','blastoise','sneasler','tsareena','klefki','sylveon','arcanine-hisui','meowscarada','corviknight','weavile'] },
   wyatt:   { name:'Wyatt',  teamName:'Sage Town Slows',        pokemon:['tyranitar','scizor','slowbro','sinistcha','basculegion-male','archaludon','meowstic-male','pelipper','mimikyu','hydreigon','volcarona'] },
 };
 
 const TRAINERS = {
-  eli:     { name:'Eli',     championsId:'7609 7098 9181', switchId:'SW-1254-5136-0241' },
-  jake:    { name:'Jake',    championsId:null,              switchId:null },
-  deshans: { name:'Deshans', championsId:null,              switchId:null },
-  tim:     { name:'Tim',     championsId:null,              switchId:null },
-  sam:     { name:'Sam',     championsId:'4234 1744 6458',  switchId:'SW-1425-0854-2900' },
-  wyatt:   { name:'Wyatt',   championsId:null,              switchId:null },
+  eli:     { name:'Eli',     championsId:'7609 7098 9181', switchId:'SW-1254-5136-0241', discord:'Eli | ThatsNoMun' },
+  jake:    { name:'Jake',    championsId:null,              switchId:null,                discord:'ajaxislemons' },
+  deshans: { name:'Deshans', championsId:null,              switchId:null,                discord:'Aura' },
+  tim:     { name:'Tim',     championsId:null,              switchId:null,                discord:'Taymooth' },
+  sam:     { name:'Sam',     championsId:'4234 1744 6458',  switchId:'SW-1425-0854-2900', discord:'Taffy Lee Fubbins' },
+  wyatt:   { name:'Wyatt',   championsId:'0853 7544 9900',  switchId:'SW-0753-1737-4306', discord:'booerns' },
 };
 
 // Pokemon that need a different API slug than what we store
@@ -351,7 +357,25 @@ const SCHEDULE = [
 
 // Results storage — edit this to add results: { 'week1-0': 'Eli', 'week1-1': 'Sam', ... }
 // key = weekN-matchIndex, value = winner name (or null for unplayed)
-const RESULTS = {};
+const RESULTS = {
+  'week1-0': 'Wyatt',  // Wyatt def. Eli 2-1
+  'week1-1': 'Sam',    // Sam def. Jake 2-1
+};
+
+// Scores — optional score string per match
+const SCORES = {
+  'week1-0': '2-1',
+  'week1-1': '2-1',
+};
+
+// Lineups — which 6 pokemon each trainer brought per match
+// key = weekN-matchIndex-trainerName (lowercase), value = array of pokemon keys from TEAMS
+const LINEUPS = {
+  'week1-0-wyatt': ['pelipper','archaludon','volcarona','tyranitar','sinistcha','basculegion-male'],
+  'week1-0-eli':   ['charizard-mega-y','venusaur','vivillon','kingambit','zoroark-hisui','rotom-wash'],
+  'week1-1-jake':  ['glimmora','talonflame','gyarados','ceruledge','gardevoir','maushold'],
+  'week1-1-sam':   ['blastoise','klefki','meowscarada','corviknight','sylveon','arcanine-hisui'],
+};
 
 // ── TYPE CHART ─────────────────────────────────────────────────────────
 const TYPE_EFF = {
@@ -741,15 +765,27 @@ function renderOverview() {
     const matchRows = curWeekData.matches.map((m, mi) => {
       const rk = `week${cur}-${mi}`;
       const winner = RESULTS[rk];
+      const score = SCORES[rk];
       const t1win = winner === m[0], t2win = winner === m[1];
       const vsOrResult = winner
-        ? `<span style="font-family:'Space Mono',monospace;font-size:11px;color:var(--muted)">●</span>`
+        ? `<div style="text-align:center"><span style="font-family:'Space Mono',monospace;font-size:11px;color:var(--muted)">●</span>${score?`<div style="font-family:'Space Mono',monospace;font-size:10px;color:var(--muted)">${t1win?score:score.split('-').reverse().join('-')}</div>`:''}</div>`
         : `<span style="font-family:'Space Mono',monospace;font-size:10px;color:var(--muted)">vs</span>`;
-      return `<div class="match-row">
+
+      const lk1 = `${rk}-${m[0].toLowerCase()}`;
+      const lk2 = `${rk}-${m[1].toLowerCase()}`;
+      const lu1 = LINEUPS[lk1], lu2 = LINEUPS[lk2];
+      function ovSprites(pokes, right) {
+        if (!pokes) return '<div></div>';
+        return `<div class="lineup-sprites${right?' right':''}">${pokes.map(p=>{const d=CACHE[p];return d?.sprite?`<img class="lineup-sprite" src="${d.sprite}" title="${dn(p)}" onclick="showModal('${p}')" alt="">`:''}).join('')}</div>`;
+      }
+      const hasLineup = lu1 || lu2;
+      const lineupRow = hasLineup ? `<div class="match-lineup-row">${ovSprites(lu1,false)}<div></div>${ovSprites(lu2,true)}</div>` : '';
+
+      return `<div class="match-row" style="${hasLineup?'border-bottom:none;padding-bottom:4px':''}">
         <div class="match-team" style="cursor:pointer;${t1win?'color:var(--accent)':t2win?'opacity:0.45':''}" onclick="setView('${m[0].toLowerCase()}')">${m[0]}</div>
         ${vsOrResult}
         <div class="match-team right" style="cursor:pointer;${t2win?'color:var(--accent)':t1win?'opacity:0.45':''}" onclick="setView('${m[1].toLowerCase()}')">${m[1]}</div>
-      </div>`;
+      </div>${lineupRow}`;
     }).join('');
     weekSection = `
       <div style="margin-top:28px">
@@ -787,6 +823,7 @@ function renderTeam(key) {
         <div class="trainer-ids">
           ${idChip('Champions ID', trainer.championsId)}
           ${idChip('Switch ID', trainer.switchId)}
+          ${idChip('Discord', trainer.discord)}
         </div>
       </div>
     </div>
@@ -951,12 +988,41 @@ function renderSchedule() {
     const matchRows = wk.matches.map((m,mi)=>{
       const rk = `week${wk.week}-${mi}`;
       const winner = RESULTS[rk];
+      const score = SCORES[rk];
       let resultHtml = `<span class="match-result result-pending">vs</span>`;
       if (winner) {
         const t1win = winner===m[0];
-        resultHtml = `<span class="match-result">${t1win?'<span class="result-win">W</span>':'<span class="result-loss">L</span>'} / ${t1win?'<span class="result-loss">L</span>':'<span class="result-win">W</span>'}</span>`;
+        resultHtml = `<div style="text-align:center">
+          <div class="match-result">${t1win?'<span class="result-win">W</span>':'<span class="result-loss">L</span>'} / ${t1win?'<span class="result-loss">L</span>':'<span class="result-win">W</span>'}</div>
+          ${score?`<div style="font-family:'Space Mono',monospace;font-size:10px;color:var(--muted)">${t1win?score:score.split('-').reverse().join('-')}</div>`:''}
+        </div>`;
       }
-      return `<div class="match-row">
+
+      // Build lineup sprites if available
+      const lk1 = `${rk}-${m[0].toLowerCase()}`;
+      const lk2 = `${rk}-${m[1].toLowerCase()}`;
+      const lu1 = LINEUPS[lk1];
+      const lu2 = LINEUPS[lk2];
+
+      function lineupSprites(pokes, alignRight) {
+        if (!pokes) return '<div></div>';
+        const sprites = pokes.map(p => {
+          const d = CACHE[p];
+          if (!d?.sprite) return '';
+          return `<img class="lineup-sprite" src="${d.sprite}" title="${dn(p)}" onclick="showModal('${p}')" alt="${dn(p)}">`;
+        }).join('');
+        return `<div class="lineup-sprites${alignRight?' right':''}">${sprites}</div>`;
+      }
+
+      const hasLineup = lu1 || lu2;
+      const lineupRow = hasLineup ? `
+        <div class="match-lineup-row">
+          ${lineupSprites(lu1, false)}
+          <div></div>
+          ${lineupSprites(lu2, true)}
+        </div>` : '';
+
+      return `<div class="match-row" style="${hasLineup?'border-bottom:none;padding-bottom:4px':''}">
         <div class="match-team" style="${winner===m[0]?'color:var(--accent)':winner&&winner!==m[0]?'opacity:0.5':''}">
           ${m[0]}
         </div>
@@ -964,7 +1030,7 @@ function renderSchedule() {
         <div class="match-team right" style="${winner===m[1]?'color:var(--accent)':winner&&winner!==m[1]?'opacity:0.5':''}">
           ${m[1]}
         </div>
-      </div>`;
+      </div>${lineupRow}`;
     }).join('');
     return `<div class="week-block${isCurrent?' week-current':''}">
       <div class="week-label">Week ${wk.week}${isCurrent?' · current':''}${wk.week<cur&&!SCHEDULE[wk.week-1]?.matches.every((_,mi)=>RESULTS[`week${wk.week}-${mi}`])?' · in progress':''}</div>
