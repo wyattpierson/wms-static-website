@@ -211,7 +211,7 @@
 <script>
 // ── DATA ───────────────────────────────────────────────────────────────
 const TEAMS = {
-  eli:     { name:'Eli',     teamName:"Eli's Team",            pokemon:['charizard-mega-y','starmie','venusaur','kingambit','espathra','zoroark-hisui','rotom-wash','kangaskhan','tinkaton','gallade','vivillon'] },
+  eli:     { name:'Eli',     teamName:"Emerald City Empoleons",            pokemon:['charizard-mega-y','starmie','venusaur','kingambit','espathra','zoroark-hisui','rotom-wash','kangaskhan','tinkaton','gallade','vivillon'] },
   jake:    { name:'Jake',   teamName:"Motor City Mausholds",            pokemon:['froslass','glimmora','gyarados','rotom-frost','talonflame','dragapult','scovillain','gardevoir','maushold','liepard','ceruledge'] },
   deshans: { name:'Deshans',teamName:"Deshans' Team",          pokemon:['sableye','golurk','lucario','oranguru','incineroar','hydrapple','primarina','aegislash','ninetales-alola','noivern','typhlosion-hisui'] },
   tim:     { name:'Tim',    teamName:"Taipei Taiphlosions",             pokemon:['garchomp','gengar','skarmory','whimsicott','farigiraf','rotom-heat','milotic','palafin','mamoswine','empoleon','excadrill'] },
@@ -222,8 +222,8 @@ const TEAMS = {
 const TRAINERS = {
   eli:     { name:'Eli',     championsId:'7609 7098 9181', switchId:'SW-1254-5136-0241', discord:'Eli | ThatsNoMun' },
   jake:    { name:'Jake',    championsId:null,              switchId:null,                discord:'ajaxislemons' },
-  deshans: { name:'Deshans', championsId:null,              switchId:null,                discord:'Aura' },
-  tim:     { name:'Tim',     championsId:null,              switchId:null,                discord:'Taymooth' },
+  deshans: { name:'Deshans', championsId:'1845 5200 2383', switchId:'SW-2372-7344-3332', discord:'Aura' },
+  tim:     { name:'Tim',     championsId:'6309 9377 9475', switchId:'SW-2498-4550-2900', discord:'Taymooth' },
   sam:     { name:'Sam',     championsId:'4234 1744 6458',  switchId:'SW-1425-0854-2900', discord:'Taffy Lee Fubbins' },
   wyatt:   { name:'Wyatt',   championsId:'0853 7544 9900',  switchId:'SW-0753-1737-4306', discord:'booerns' },
 };
@@ -360,21 +360,25 @@ const SCHEDULE = [
 const RESULTS = {
   'week1-0': 'Wyatt',  // Wyatt def. Eli 2-1
   'week1-1': 'Sam',    // Sam def. Jake 2-1
+  'week1-2': 'Tim',    // Tim def. Deshans
 };
 
 // Scores — optional score string per match
 const SCORES = {
   'week1-0': '2-1',
   'week1-1': '2-1',
+  'week1-2': '2-1',
 };
 
 // Lineups — which 6 pokemon each trainer brought per match
 // key = weekN-matchIndex-trainerName (lowercase), value = array of pokemon keys from TEAMS
 const LINEUPS = {
-  'week1-0-wyatt': ['pelipper','archaludon','volcarona','tyranitar','sinistcha','basculegion-male'],
-  'week1-0-eli':   ['charizard-mega-y','venusaur','vivillon','kingambit','zoroark-hisui','rotom-wash'],
-  'week1-1-jake':  ['glimmora','talonflame','gyarados','ceruledge','gardevoir','maushold'],
-  'week1-1-sam':   ['blastoise','klefki','meowscarada','corviknight','sylveon','arcanine-hisui'],
+  'week1-0-wyatt':   ['pelipper','archaludon','volcarona','tyranitar','sinistcha','basculegion-male'],
+  'week1-0-eli':     ['charizard-mega-y','venusaur','vivillon','kingambit','zoroark-hisui','rotom-wash'],
+  'week1-1-jake':    ['glimmora','talonflame','gyarados','ceruledge','gardevoir','maushold'],
+  'week1-1-sam':     ['blastoise','klefki','meowscarada','corviknight','sylveon','arcanine-hisui'],
+  'week1-2-tim':     ['garchomp','whimsicott','farigiraf','empoleon','gengar','rotom-heat'],
+  'week1-2-deshans': ['lucario','oranguru','primarina','golurk','incineroar','hydrapple'],
 };
 
 // ── TYPE CHART ─────────────────────────────────────────────────────────
@@ -792,7 +796,7 @@ function renderOverview() {
         <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);font-family:'Space Mono',monospace;margin-bottom:12px">
           Week ${cur} · Current matchups
         </div>
-        <div class="week-block week-current" style="max-width:460px">${matchRows}</div>
+        <div class="week-block week-current">${matchRows}</div>
       </div>`;
   }
 
