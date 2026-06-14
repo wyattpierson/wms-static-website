@@ -203,6 +203,9 @@
   <header>
     <div class="league-badge">Draft League</div>
     <h1>Siebert <span>Season 1</span></h1>
+    <a href="https://poke.inhouseboyz.com/league/siebert1" target="_blank" style="display:inline-flex;align-items:center;gap:6px;margin-top:12px;font-size:12px;color:var(--muted);text-decoration:none;font-family:'Space Mono',monospace;border:1px solid var(--border);border-radius:6px;padding:5px 12px;transition:all 0.15s;" onmouseover="this.style.color='var(--accent)';this.style.borderColor='rgba(200,240,83,0.3)'" onmouseout="this.style.color='var(--muted)';this.style.borderColor='var(--border)'">
+      Better league site ↗
+    </a>
   </header>
   <nav class="nav-bar" id="nav"></nav>
   <div id="view"></div>
@@ -343,35 +346,37 @@ const ALT_FORMS = {
 };
 
 const SCHEDULE = [
-  { week:1, matches:[['Eli','Wyatt'],['Jake','Sam'],['Deshans','Tim']] },
-  { week:2, matches:[['Eli','Jake'],['Deshans','Wyatt'],['Tim','Sam']] },
-  { week:3, matches:[['Eli','Deshans'],['Jake','Tim'],['Sam','Wyatt']] },
-  { week:4, matches:[['Eli','Tim'],['Jake','Wyatt'],['Deshans','Sam']] },
-  { week:5, matches:[['Eli','Sam'],['Jake','Deshans'],['Tim','Wyatt']] },
-  { week:6, matches:[['Eli','Wyatt'],['Jake','Sam'],['Deshans','Tim']] },
-  { week:7, matches:[['Eli','Jake'],['Deshans','Wyatt'],['Tim','Sam']] },
-  { week:8, matches:[['Eli','Deshans'],['Jake','Tim'],['Sam','Wyatt']] },
-  { week:9, matches:[['Eli','Tim'],['Jake','Wyatt'],['Deshans','Sam']] },
-  { week:10,matches:[['Eli','Sam'],['Jake','Deshans'],['Tim','Wyatt']] },
+  { key:'week1',  label:'Week 1',   dateRange:'June 1–7',       calWeek:1, matches:[['Eli','Wyatt'],['Jake','Sam'],['Deshans','Tim']] },
+  { key:'week2',  label:'Week 2',   dateRange:'June 8–14',      calWeek:2, matches:[['Eli','Jake'],['Deshans','Wyatt'],['Tim','Sam']] },
+  { key:'week3a', label:'Week 3-A', dateRange:'June 15–21',     calWeek:3, matches:[['Eli','Deshans'],['Jake','Tim'],['Sam','Wyatt']] },
+  { key:'week3b', label:'Week 3-B', dateRange:'June 15–21',     calWeek:3, matches:[['Eli','Tim'],['Jake','Wyatt'],['Deshans','Sam']] },
+  { key:'week4a', label:'Week 4-A', dateRange:'June 22–28',     calWeek:4, matches:[['Eli','Sam'],['Jake','Deshans'],['Tim','Wyatt']] },
+  { key:'week4b', label:'Week 4-B', dateRange:'June 22–28',     calWeek:4, matches:[['Eli','Wyatt'],['Jake','Sam'],['Deshans','Tim']] },
+  { key:'week5a', label:'Week 5-A', dateRange:'June 29–July 5', calWeek:5, matches:[['Eli','Jake'],['Deshans','Wyatt'],['Tim','Sam']] },
+  { key:'week5b', label:'Week 5-B', dateRange:'June 29–July 5', calWeek:5, matches:[['Eli','Deshans'],['Jake','Tim'],['Sam','Wyatt']] },
+  { key:'week6a', label:'Week 6-A', dateRange:'July 6–12',      calWeek:6, matches:[['Eli','Tim'],['Jake','Wyatt'],['Deshans','Sam']] },
+  { key:'week6b', label:'Week 6-B', dateRange:'July 6–12',      calWeek:6, matches:[['Eli','Sam'],['Jake','Deshans'],['Tim','Wyatt']] },
 ];
 
-// Results storage — edit this to add results: { 'week1-0': 'Eli', 'week1-1': 'Sam', ... }
-// key = weekN-matchIndex, value = winner name (or null for unplayed)
+// Results: key = {weekKey}-{matchIndex}, value = winner name
 const RESULTS = {
   'week1-0': 'Wyatt',  // Wyatt def. Eli 2-1
   'week1-1': 'Sam',    // Sam def. Jake 2-1
-  'week1-2': 'Tim',    // Tim def. Deshans
+  'week1-2': 'Tim',    // Tim def. Deshans 2-1
+  'week2-1': 'Wyatt',  // Wyatt def. Deshans 2-0
+  'week2-2': 'Tim',    // Tim def. Sam 2-0
 };
 
-// Scores — optional score string per match
+// Scores: key = {weekKey}-{matchIndex}
 const SCORES = {
   'week1-0': '2-1',
   'week1-1': '2-1',
   'week1-2': '2-1',
+  'week2-1': '2-0',
+  'week2-2': '2-0',
 };
 
-// Lineups — which 6 pokemon each trainer brought per match
-// key = weekN-matchIndex-trainerName (lowercase), value = array of pokemon keys from TEAMS
+// Lineups: key = {weekKey}-{matchIndex}-{trainerName lowercase}
 const LINEUPS = {
   'week1-0-wyatt':   ['pelipper','archaludon','volcarona','tyranitar','sinistcha','basculegion-male'],
   'week1-0-eli':     ['charizard-mega-y','venusaur','vivillon','kingambit','zoroark-hisui','rotom-wash'],
@@ -379,6 +384,10 @@ const LINEUPS = {
   'week1-1-sam':     ['blastoise','klefki','meowscarada','corviknight','sylveon','arcanine-hisui'],
   'week1-2-tim':     ['garchomp','whimsicott','farigiraf','empoleon','gengar','rotom-heat'],
   'week1-2-deshans': ['lucario','oranguru','primarina','golurk','incineroar','hydrapple'],
+  'week2-1-wyatt':   ['sinistcha','basculegion-male','scizor','hydreigon','volcarona','pelipper'],
+  'week2-1-deshans': ['primarina','oranguru','hydrapple','golurk','incineroar','lucario'],
+  'week2-2-tim':     ['empoleon','gengar','mamoswine','milotic','rotom-heat','whimsicott'],
+  'week2-2-sam':     ['blastoise','corviknight','dragonite','klefki','meowscarada','tsareena'],
 };
 
 // ── TYPE CHART ─────────────────────────────────────────────────────────
@@ -582,7 +591,7 @@ function calcStandings() {
   Object.values(TEAMS).forEach(t => { stats[t.name] = { w:0, l:0, pts:0 }; });
   SCHEDULE.forEach((wk,wi) => {
     wk.matches.forEach((m,mi) => {
-      const winner = RESULTS[`week${wk.week}-${mi}`];
+      const winner = RESULTS[`${wk.key}-${mi}`];
       if (!winner) return;
       const loser = m[0]===winner ? m[1] : m[0];
       if (stats[winner]) { stats[winner].w++; stats[winner].pts += 3; }
@@ -593,12 +602,12 @@ function calcStandings() {
 }
 
 function currentWeek() {
-  // Find first week with any unplayed match
+  // Find the first schedule entry with any unplayed match
   for (const wk of SCHEDULE) {
-    const anyUnplayed = wk.matches.some((_,mi)=>!RESULTS[`week${wk.week}-${mi}`]);
-    if (anyUnplayed) return wk.week;
+    const anyUnplayed = wk.matches.some((_,mi)=>!RESULTS[`${wk.key}-${mi}`]);
+    if (anyUnplayed) return wk.calWeek;
   }
-  return SCHEDULE.length;
+  return SCHEDULE[SCHEDULE.length-1].calWeek;
 }
 
 // ── MODAL ──────────────────────────────────────────────────────────────
@@ -763,40 +772,49 @@ function renderOverview() {
     </div>`;
   }).join('');
   const cur = currentWeek();
-  const curWeekData = SCHEDULE.find(w => w.week === cur);
+  const curWeekEntries = SCHEDULE.filter(w => w.calWeek === cur);
   let weekSection = '';
-  if (curWeekData) {
-    const matchRows = curWeekData.matches.map((m, mi) => {
-      const rk = `week${cur}-${mi}`;
-      const winner = RESULTS[rk];
-      const score = SCORES[rk];
-      const t1win = winner === m[0], t2win = winner === m[1];
-      const vsOrResult = winner
-        ? `<div style="text-align:center"><span style="font-family:'Space Mono',monospace;font-size:11px;color:var(--muted)">●</span>${score?`<div style="font-family:'Space Mono',monospace;font-size:10px;color:var(--muted)">${t1win?score:score.split('-').reverse().join('-')}</div>`:''}</div>`
-        : `<span style="font-family:'Space Mono',monospace;font-size:10px;color:var(--muted)">vs</span>`;
+  if (curWeekEntries.length) {
+    const dateRange = curWeekEntries[0].dateRange;
 
-      const lk1 = `${rk}-${m[0].toLowerCase()}`;
-      const lk2 = `${rk}-${m[1].toLowerCase()}`;
-      const lu1 = LINEUPS[lk1], lu2 = LINEUPS[lk2];
-      function ovSprites(pokes, right) {
-        if (!pokes) return '<div></div>';
-        return `<div class="lineup-sprites${right?' right':''}">${pokes.map(p=>{const d=CACHE[p];return d?.sprite?`<img class="lineup-sprite" src="${d.sprite}" title="${dn(p)}" onclick="showModal('${p}')" alt="">`:''}).join('')}</div>`;
-      }
-      const hasLineup = lu1 || lu2;
-      const lineupRow = hasLineup ? `<div class="match-lineup-row">${ovSprites(lu1,false)}<div></div>${ovSprites(lu2,true)}</div>` : '';
+    function ovMatchRows(wk) {
+      return wk.matches.map((m, mi) => {
+        const rk = `${wk.key}-${mi}`;
+        const winner = RESULTS[rk];
+        const score = SCORES[rk];
+        const t1win = winner === m[0], t2win = winner === m[1];
+        const vsOrResult = winner
+          ? `<div style="text-align:center"><span style="font-family:'Space Mono',monospace;font-size:11px;color:var(--muted)">●</span>${score?`<div style="font-family:'Space Mono',monospace;font-size:10px;color:var(--muted)">${t1win?score:score.split('-').reverse().join('-')}</div>`:''}</div>`
+          : `<span style="font-family:'Space Mono',monospace;font-size:10px;color:var(--muted)">vs</span>`;
+        const lk1 = `${rk}-${m[0].toLowerCase()}`;
+        const lk2 = `${rk}-${m[1].toLowerCase()}`;
+        const lu1 = LINEUPS[lk1], lu2 = LINEUPS[lk2];
+        function ovSprites(pokes, right) {
+          if (!pokes) return '<div></div>';
+          return `<div class="lineup-sprites${right?' right':''}">${pokes.map(p=>{const d=CACHE[p];return d?.sprite?`<img class="lineup-sprite" src="${d.sprite}" title="${dn(p)}" onclick="showModal('${p}')" alt="">`:''}).join('')}</div>`;
+        }
+        const hasLineup = lu1 || lu2;
+        const lineupRow = hasLineup ? `<div class="match-lineup-row">${ovSprites(lu1,false)}<div></div>${ovSprites(lu2,true)}</div>` : '';
+        return `<div class="match-row" style="${hasLineup?'border-bottom:none;padding-bottom:4px':''}">
+          <div class="match-team" style="cursor:pointer;${t1win?'color:var(--accent)':t2win?'opacity:0.45':''}" onclick="setView('${m[0].toLowerCase()}')">${m[0]}</div>
+          ${vsOrResult}
+          <div class="match-team right" style="cursor:pointer;${t2win?'color:var(--accent)':t1win?'opacity:0.45':''}" onclick="setView('${m[1].toLowerCase()}')">${m[1]}</div>
+        </div>${lineupRow}`;
+      }).join('');
+    }
 
-      return `<div class="match-row" style="${hasLineup?'border-bottom:none;padding-bottom:4px':''}">
-        <div class="match-team" style="cursor:pointer;${t1win?'color:var(--accent)':t2win?'opacity:0.45':''}" onclick="setView('${m[0].toLowerCase()}')">${m[0]}</div>
-        ${vsOrResult}
-        <div class="match-team right" style="cursor:pointer;${t2win?'color:var(--accent)':t1win?'opacity:0.45':''}" onclick="setView('${m[1].toLowerCase()}')">${m[1]}</div>
-      </div>${lineupRow}`;
-    }).join('');
+    const blocks = curWeekEntries.map(wk => `
+      <div class="week-block week-current" style="margin-bottom:10px">
+        <div class="week-label">${wk.label} <span style="font-weight:400;color:var(--muted)">${wk.dateRange}</span></div>
+        ${ovMatchRows(wk)}
+      </div>`).join('');
+
     weekSection = `
       <div style="margin-top:28px">
-        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);font-family:'Space Mono',monospace;margin-bottom:12px">
-          Week ${cur} · Current matchups
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--accent);font-family:'Space Mono',monospace;margin-bottom:12px">
+          Current matchups · ${dateRange}
         </div>
-        <div class="week-block week-current">${matchRows}</div>
+        ${blocks}
       </div>`;
   }
 
@@ -988,9 +1006,11 @@ function renderSchedule() {
   }).join('');
 
   const weeks = SCHEDULE.map(wk=>{
-    const isCurrent = wk.week === cur;
+    const isCurrent = wk.calWeek === cur;
+    const allComplete = wk.matches.every((_,mi)=>RESULTS[`${wk.key}-${mi}`]);
+    const inProgress = !allComplete && wk.calWeek < cur;
     const matchRows = wk.matches.map((m,mi)=>{
-      const rk = `week${wk.week}-${mi}`;
+      const rk = `${wk.key}-${mi}`;
       const winner = RESULTS[rk];
       const score = SCORES[rk];
       let resultHtml = `<span class="match-result result-pending">vs</span>`;
@@ -1002,7 +1022,6 @@ function renderSchedule() {
         </div>`;
       }
 
-      // Build lineup sprites if available
       const lk1 = `${rk}-${m[0].toLowerCase()}`;
       const lk2 = `${rk}-${m[1].toLowerCase()}`;
       const lu1 = LINEUPS[lk1];
@@ -1036,8 +1055,14 @@ function renderSchedule() {
         </div>
       </div>${lineupRow}`;
     }).join('');
+
+    const statusTag = isCurrent ? ' · current' : inProgress ? ' · in progress' : '';
     return `<div class="week-block${isCurrent?' week-current':''}">
-      <div class="week-label">Week ${wk.week}${isCurrent?' · current':''}${wk.week<cur&&!SCHEDULE[wk.week-1]?.matches.every((_,mi)=>RESULTS[`week${wk.week}-${mi}`])?' · in progress':''}</div>
+      <div class="week-label">
+        ${wk.label}
+        <span style="font-weight:400;color:var(--muted);margin-left:6px">${wk.dateRange}</span>
+        ${statusTag?`<span style="color:var(--accent)">${statusTag}</span>`:''}
+      </div>
       ${matchRows}
     </div>`;
   }).join('');
