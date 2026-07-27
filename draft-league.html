@@ -202,10 +202,16 @@
 <div class="wrap">
   <header>
     <div class="league-badge">Draft League</div>
-    <h1>Siebert <span>Season 1</span></h1>
-    <a href="https://poke.inhouseboyz.com/league/siebert1" target="_blank" style="display:inline-flex;align-items:center;gap:6px;margin-top:12px;font-size:12px;color:var(--muted);text-decoration:none;font-family:'Space Mono',monospace;border:1px solid var(--border);border-radius:6px;padding:5px 12px;transition:all 0.15s;" onmouseover="this.style.color='var(--accent)';this.style.borderColor='rgba(200,240,83,0.3)'" onmouseout="this.style.color='var(--muted)';this.style.borderColor='var(--border)'">
-      Better league site ↗
-    </a>
+    <h1>Siebert <span id="season-title">Season 2</span></h1>
+    <div style="display:flex;align-items:center;gap:10px;margin-top:12px;flex-wrap:wrap">
+      <div style="display:flex;gap:4px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:3px">
+        <button id="s1-btn" onclick="setSeason(1)" style="font-family:'Space Mono',monospace;font-size:11px;font-weight:700;padding:5px 14px;border-radius:6px;border:none;background:transparent;color:var(--muted);cursor:pointer;transition:all 0.15s">S1</button>
+        <button id="s2-btn" onclick="setSeason(2)" style="font-family:'Space Mono',monospace;font-size:11px;font-weight:700;padding:5px 14px;border-radius:6px;border:none;background:var(--accent);color:#0d0f14;cursor:pointer;transition:all 0.15s">S2</button>
+      </div>
+      <a href="https://poke.inhouseboyz.com/league/3bffbe9bf515" target="_blank" id="league-link" style="display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);text-decoration:none;font-family:'Space Mono',monospace;border:1px solid var(--border);border-radius:6px;padding:5px 12px;transition:all 0.15s;" onmouseover="this.style.color='var(--accent)';this.style.borderColor='rgba(200,240,83,0.3)'" onmouseout="this.style.color='var(--muted)';this.style.borderColor='var(--border)'">
+        Better league site ↗
+      </a>
+    </div>
   </header>
   <nav class="nav-bar" id="nav"></nav>
   <div id="view"></div>
@@ -216,7 +222,7 @@
 const TEAMS = {
   eli:     { name:'Eli',     teamName:"Emerald City Empoleons",            pokemon:['charizard-mega-y','starmie','venusaur','kingambit','espathra','zoroark-hisui','rotom-wash','kangaskhan','tinkaton','gallade','vivillon'] },
   jake:    { name:'Jake',   teamName:"Motor City Mausholds",            pokemon:['froslass','glimmora','gyarados','rotom-frost','talonflame','dragapult','scovillain','gardevoir','maushold','liepard','ceruledge'] },
-  deshans: { name:'Deshans',teamName:"Deshans' Team",          pokemon:['sableye','golurk','lucario','oranguru','incineroar','hydrapple','primarina','aegislash','ninetales-alola','noivern','typhlosion-hisui'] },
+  deshans: { name:'Deshans',teamName:"C-City Charcadets",          pokemon:['sableye','golurk','lucario','oranguru','incineroar','hydrapple','primarina','aegislash','ninetales-alola','noivern','typhlosion-hisui'] },
   tim:     { name:'Tim',    teamName:"Taipei Taiphlosions",             pokemon:['garchomp','gengar','skarmory','whimsicott','farigiraf','rotom-heat','milotic','palafin','mamoswine','empoleon','excadrill'] },
   sam:     { name:'Sam',    teamName:"Big Apple Hydrapples", pokemon:['dragonite','aerodactyl','blastoise','sneasler','tsareena','klefki','sylveon','arcanine-hisui','meowscarada','corviknight','weavile'] },
   wyatt:   { name:'Wyatt',  teamName:'Sage Town Slows',        pokemon:['tyranitar','scizor','slowbro','sinistcha','basculegion-male','archaludon','meowstic-male','pelipper','mimikyu','hydreigon','volcarona'] },
@@ -360,38 +366,124 @@ const SCHEDULE = [
 
 // Results: key = {weekKey}-{matchIndex}, value = winner name
 const RESULTS = {
-  'week1-0': 'Wyatt',  // Wyatt def. Eli 2-1
-  'week1-1': 'Sam',    // Sam def. Jake 2-1
-  'week1-2': 'Tim',    // Tim def. Deshans 2-1
-  'week2-0': 'Eli',    // Eli def. Jake 2-0
-  'week2-1': 'Wyatt',  // Wyatt def. Deshans 2-0
-  'week2-2': 'Tim',    // Tim def. Sam 2-0
+  'week1-0': 'Wyatt',   // Wyatt def. Eli 2-1
+  'week1-1': 'Sam',     // Sam def. Jake 2-1
+  'week1-2': 'Tim',     // Tim def. Deshans 2-1
+  'week2-0': 'Eli',     // Eli def. Jake 2-0
+  'week2-1': 'Wyatt',   // Wyatt def. Deshans 2-0
+  'week2-2': 'Tim',     // Tim def. Sam 2-0
+  'week3a-0': 'Eli',    // Eli def. Deshans 2-0
+  'week3a-1': 'Jake',   // Jake def. Tim 2-0
+  'week3a-2': 'Wyatt',  // Wyatt def. Sam 2-1
+  'week3b-0': 'Tim',    // Tim def. Eli 2-1
+  'week3b-1': 'Wyatt',  // Wyatt def. Jake 2-1
+  'week3b-2': 'Deshans',// Deshans def. Sam 2-1
+  'week4a-0': 'Eli',    // Eli def. Sam 2-0
+  'week4a-1': 'Jake',   // Jake def. Deshans 2-1
+  'week4a-2': 'Wyatt',  // Wyatt def. Tim 2-0
+  'week4b-0': 'Wyatt',  // Wyatt def. Eli 2-0
+  'week4b-1': 'Sam',    // Sam def. Jake 2-0
+  'week4b-2': 'Tim',    // Tim def. Deshans 2-1
+  'week5a-0': 'Eli',    // Eli def. Jake 2-1
+  'week5a-1': 'Deshans',// Deshans def. Wyatt 2-0
+  'week5a-2': 'Sam',     // Sam def. Tim 2-0
+  'week5b-0': 'Deshans',// Deshans def. Eli 2-0
+  'week5b-1': 'Tim',    // Tim def. Jake 2-1
+  'week5b-2': 'Sam',    // Sam def. Wyatt 2-0
+  'week6a-0': 'Eli',    // Eli def. Tim 2-0
+  'week6a-1': 'Wyatt',  // Wyatt def. Jake 2-1
+  'week6a-2': 'Sam',    // Sam def. Deshans 2-1
+  'week6b-0': 'Sam',    // Sam def. Eli 2-0
+  'week6b-1': 'Deshans',// Deshans def. Jake 2-0
+  'week6b-2': 'Wyatt',   // Wyatt def. Tim 2-1
 };
 
 // Scores: key = {weekKey}-{matchIndex}
 const SCORES = {
-  'week1-0': '2-1',
-  'week1-1': '2-1',
-  'week1-2': '2-1',
-  'week2-0': '2-0',
-  'week2-1': '2-0',
-  'week2-2': '2-0',
+  'week1-0': '2-1', 'week1-1': '2-1', 'week1-2': '2-1',
+  'week2-0': '2-0', 'week2-1': '2-0', 'week2-2': '2-0',
+  'week3a-0': '2-0', 'week3a-1': '2-0', 'week3a-2': '2-1',
+  'week3b-0': '2-1', 'week3b-1': '2-1', 'week3b-2': '2-1',
+  'week4a-0': '2-0', 'week4a-1': '2-1', 'week4a-2': '2-0',
+  'week4b-0': '2-0', 'week4b-1': '2-0', 'week4b-2': '2-1',
+  'week5a-0': '2-1', 'week5a-1': '2-0', 'week5a-2': '2-0',
+  'week5b-0': '2-0', 'week5b-1': '2-1', 'week5b-2': '2-0',
+  'week6a-0': '2-0', 'week6a-1': '2-0', 'week6a-2': '2-1',
+  'week6b-0': '2-0', 'week6b-1': '2-0', 'week6b-2': '2-1',
 };
 
 // Lineups: key = {weekKey}-{matchIndex}-{trainerName lowercase}
 const LINEUPS = {
-  'week1-0-wyatt':   ['pelipper','archaludon','volcarona','tyranitar','sinistcha','basculegion-male'],
-  'week1-0-eli':     ['charizard-mega-y','venusaur','vivillon','kingambit','zoroark-hisui','rotom-wash'],
-  'week1-1-jake':    ['glimmora','talonflame','gyarados','ceruledge','gardevoir','maushold'],
-  'week1-1-sam':     ['blastoise','klefki','meowscarada','corviknight','sylveon','arcanine-hisui'],
-  'week1-2-tim':     ['garchomp','whimsicott','farigiraf','empoleon','gengar','rotom-heat'],
-  'week1-2-deshans': ['lucario','oranguru','primarina','golurk','incineroar','hydrapple'],
-  'week2-0-eli':     ['charizard-mega-y','gallade','kingambit','rotom-wash','vivillon','zoroark-hisui'],
-  'week2-0-jake':    ['dragapult','froslass','glimmora','gyarados','scovillain','talonflame'],
-  'week2-1-wyatt':   ['sinistcha','basculegion-male','scizor','hydreigon','volcarona','pelipper'],
-  'week2-1-deshans': ['primarina','oranguru','hydrapple','golurk','incineroar','lucario'],
-  'week2-2-tim':     ['empoleon','gengar','mamoswine','milotic','rotom-heat','whimsicott'],
-  'week2-2-sam':     ['blastoise','corviknight','dragonite','klefki','meowscarada','tsareena'],
+  // Week 1
+  'week1-0-eli':      ['charizard-mega-y','kingambit','rotom-wash','venusaur','vivillon','zoroark-hisui'],
+  'week1-0-wyatt':    ['archaludon','basculegion-male','pelipper','sinistcha','tyranitar','volcarona'],
+  'week1-1-jake':     ['ceruledge','gardevoir','glimmora','gyarados','maushold','talonflame'],
+  'week1-1-sam':      ['arcanine-hisui','blastoise','corviknight','klefki','meowscarada','sylveon'],
+  'week1-2-deshans':  ['golurk','hydrapple','incineroar','lucario','oranguru','primarina'],
+  'week1-2-tim':      ['empoleon','farigiraf','garchomp','gengar','rotom-heat','whimsicott'],
+  // Week 2
+  'week2-0-eli':      ['charizard-mega-y','gallade','kingambit','rotom-wash','vivillon','zoroark-hisui'],
+  'week2-0-jake':     ['dragapult','froslass','glimmora','gyarados','scovillain','talonflame'],
+  'week2-1-deshans':  ['golurk','hydrapple','incineroar','lucario','oranguru','primarina'],
+  'week2-1-wyatt':    ['basculegion-male','hydreigon','pelipper','scizor','sinistcha','volcarona'],
+  'week2-2-tim':      ['empoleon','gengar','mamoswine','milotic','rotom-heat','whimsicott'],
+  'week2-2-sam':      ['blastoise','corviknight','dragonite','klefki','meowscarada','tsareena'],
+  // Week 3-A
+  'week3a-0-eli':     ['kangaskhan','kingambit','rotom-wash','venusaur','vivillon','zoroark-hisui'],
+  'week3a-0-deshans': ['lucario','ninetales-alola','noivern','primarina','sableye','typhlosion-hisui'],
+  'week3a-1-jake':    ['dragapult','froslass','gardevoir','glimmora','maushold','rotom-frost'],
+  'week3a-1-tim':     ['empoleon','gengar','mamoswine','milotic','rotom-heat','whimsicott'],
+  'week3a-2-sam':     ['aerodactyl','arcanine-hisui','dragonite','klefki','sylveon','weavile'],
+  'week3a-2-wyatt':   ['archaludon','mimikyu','pelipper','scizor','sinistcha','slowbro'],
+  // Week 3-B
+  'week3b-0-eli':     ['charizard-mega-y','gallade','kingambit','rotom-wash','venusaur','vivillon'],
+  'week3b-0-tim':     ['farigiraf','garchomp','gengar','mamoswine','rotom-heat','whimsicott'],
+  'week3b-1-jake':    ['froslass','gardevoir','glimmora','maushold','rotom-frost','talonflame'],
+  'week3b-1-wyatt':   ['archaludon','basculegion-male','hydreigon','pelipper','scizor','tyranitar'],
+  'week3b-2-deshans': ['lucario','ninetales-alola','noivern','primarina','sableye','typhlosion-hisui'],
+  'week3b-2-sam':     ['aerodactyl','blastoise','dragonite','klefki','sneasler','tsareena'],
+  // Week 4-A
+  'week4a-0-eli':     ['charizard-mega-y','espathra','kangaskhan','rotom-wash','venusaur','vivillon'],
+  'week4a-0-sam':     ['aerodactyl','corviknight','dragonite','klefki','meowscarada','tsareena'],
+  'week4a-1-jake':    ['froslass','glimmora','gyarados','rotom-frost','scovillain','talonflame'],
+  'week4a-1-deshans': ['incineroar','lucario','ninetales-alola','noivern','primarina','typhlosion-hisui'],
+  'week4a-2-wyatt':   ['archaludon','basculegion-male','hydreigon','meowstic-male','pelipper','scizor'],
+  'week4a-2-tim':     ['farigiraf','garchomp','gengar','mamoswine','rotom-heat','whimsicott'],
+  // Week 4-B
+  'week4b-0-wyatt':   ['archaludon','meowstic-male','pelipper','sinistcha','slowbro','tyranitar'],
+  'week4b-0-eli':     ['kangaskhan','kingambit','rotom-wash','venusaur','vivillon','zoroark-hisui'],
+  'week4b-1-sam':     ['aerodactyl','arcanine-hisui','blastoise','dragonite','klefki','meowscarada'],
+  'week4b-1-jake':    ['froslass','glimmora','gyarados','rotom-frost','scovillain','talonflame'],
+  'week4b-2-deshans': ['incineroar','lucario','ninetales-alola','noivern','primarina','typhlosion-hisui'],
+  'week4b-2-tim':     ['empoleon','farigiraf','gengar','palafin','rotom-heat','whimsicott'],
+  // Week 5-A
+  'week5a-0-eli':     ['charizard-mega-y','kingambit','rotom-wash','tinkaton','venusaur','zoroark-hisui'],
+  'week5a-0-jake':    ['ceruledge','froslass','gardevoir','glimmora','maushold','talonflame'],
+  'week5a-1-deshans': ['golurk','incineroar','lucario','ninetales-alola','oranguru','primarina'],
+  'week5a-1-wyatt':   ['basculegion-male','meowstic-male','pelipper','scizor','slowbro','volcarona'],
+  'week5a-2-tim':     ['farigiraf','garchomp','gengar','mamoswine','rotom-heat','whimsicott'],
+  'week5a-2-sam':     ['aerodactyl','arcanine-hisui','blastoise','meowscarada','sneasler','sylveon'],
+  // Week 5-B
+  'week5b-0-deshans': ['golurk','incineroar','lucario','ninetales-alola','oranguru','primarina'],
+  'week5b-0-eli':     ['kangaskhan','kingambit','rotom-wash','starmie','venusaur','zoroark-hisui'],
+  'week5b-1-tim':     ['empoleon','excadrill','gengar','mamoswine','rotom-heat','whimsicott'],
+  'week5b-1-jake':    ['froslass','glimmora','gyarados','rotom-frost','scovillain','talonflame'],
+  'week5b-2-sam':     ['aerodactyl','dragonite','klefki','meowscarada','sneasler','sylveon'],
+  'week5b-2-wyatt':   ['archaludon','basculegion-male','meowstic-male','pelipper','scizor','volcarona'],
+  // Week 6-A
+  'week6a-0-eli':     ['kangaskhan','kingambit','rotom-wash','starmie','vivillon','zoroark-hisui'],
+  'week6a-0-tim':     ['excadrill','garchomp','gengar','rotom-heat','skarmory','whimsicott'],
+  'week6a-1-jake':    ['ceruledge','froslass','gardevoir','glimmora','maushold','rotom-frost'],
+  'week6a-1-wyatt':   ['archaludon','scizor','sinistcha','slowbro','tyranitar','volcarona'],
+  'week6a-2-deshans': ['golurk','incineroar','lucario','ninetales-alola','oranguru','primarina'],
+  'week6a-2-sam':     ['aerodactyl','arcanine-hisui','blastoise','klefki','meowscarada','sneasler'],
+  // Week 6-B
+  'week6b-0-sam':     ['aerodactyl','blastoise','corviknight','meowscarada','sneasler','sylveon'],
+  'week6b-0-eli':     ['charizard-mega-y','rotom-wash','starmie','tinkaton','vivillon','zoroark-hisui'],
+  'week6b-1-deshans': ['golurk','incineroar','lucario','ninetales-alola','oranguru','primarina'],
+  'week6b-1-jake':    ['ceruledge','froslass','gardevoir','glimmora','gyarados','maushold'],
+  'week6b-2-tim':     ['excadrill','farigiraf','mamoswine','milotic','palafin','skarmory'],
+  'week6b-2-wyatt':   ['hydreigon','meowstic-male','mimikyu','slowbro','tyranitar','volcarona'],
 };
 
 // ── TYPE CHART ─────────────────────────────────────────────────────────
@@ -753,11 +845,6 @@ document.addEventListener('click', () => hideTcTooltip());
 let currentView = 'overview';
 let rosterSubView = {};
 
-function renderNav() {
-  const tabs = [['overview','Overview'],['schedule','Schedule'],['all','All teams'],['eli','Eli'],['jake','Jake'],['deshans','Deshans'],['tim','Tim'],['sam','Sam'],['wyatt','Wyatt']];
-  document.getElementById('nav').innerHTML = tabs.map(([k,l])=>`<button class="nav-btn${currentView===k?' active':''}" onclick="setView('${k}')">${l}</button>`).join('');
-}
-
 function renderOverview() {
   const standings = calcStandings();
   const cards = Object.entries(TEAMS).map(([k,t])=>{
@@ -856,6 +943,7 @@ function renderTeam(key) {
     <div class="roster-header" style="margin-top:0"><div style="display:flex;gap:6px">
       <button class="sub-tab${sub==='roster'?' active':''}" onclick="setSubView('${key}','roster')">Roster</button>
       <button class="sub-tab${sub==='typechart'?' active':''}" onclick="setSubView('${key}','typechart')">Type coverage</button>
+      <button class="sub-tab${sub==='speeds'?' active':''}" onclick="setSubView('${key}','speeds')">Speeds</button>
     </div><div class="roster-hint">click card for full stats ↗</div></div>
     <div id="sub-content"></div>`;
   renderSubView(key, sub);
@@ -864,7 +952,8 @@ function renderTeam(key) {
 window.setSubView = function(key, sub) {
   rosterSubView[key] = sub;
   document.querySelectorAll('.sub-tab').forEach(b=>b.classList.remove('active'));
-  document.querySelectorAll('.sub-tab').forEach(b=>{ if(b.textContent.includes(sub==='roster'?'Roster':'Type')) b.classList.add('active'); });
+  const label = sub==='roster'?'Roster':sub==='speeds'?'Speeds':'Type';
+  document.querySelectorAll('.sub-tab').forEach(b=>{ if(b.textContent.includes(label)) b.classList.add('active'); });
   renderSubView(key, sub);
 };
 
@@ -887,7 +976,7 @@ function renderSubView(key, sub) {
       </div>`;
     }).join('');
     el.innerHTML = `<div class="pokemon-grid">${cards}</div>`;
-  } else {
+  } else if (sub === 'typechart') {
     // ── TYPE COVERAGE BAR CHART ─────────────────────────────────────
     const ALL_TYPES = ['normal','fire','water','electric','grass','ice','fighting','poison','ground','flying','psychic','bug','rock','ghost','dragon','dark','steel','fairy'];
 
@@ -969,6 +1058,8 @@ function renderSubView(key, sub) {
         </div>
         ${rows}
       </div>`;
+  } else if (sub === 'speeds') {
+    el.innerHTML = renderSpeedsTab(t.pokemon, CACHE, MEGAS, CAN_MEGA, dn, 'showModal');
   }
 }
 
@@ -1095,18 +1186,401 @@ function setView(v) {
   else renderTeam(v);
 }
 
+// ── SPEEDS TAB ─────────────────────────────────────────────────────────
+function renderSpeedsTab(pokemon, cache, megasMap, canMegaSet, displayNameFn, onClickFn) {
+  const entries = [];
+
+  pokemon.forEach(p => {
+    const d = cache[p];
+    if (!d) return;
+    entries.push({
+      name: displayNameFn(p),
+      spe: d.stats.spe,
+      sprite: d.sprite,
+      key: p,
+      isMega: false,
+    });
+    // Add mega if available — check both the passed cache and global CACHE
+    if (canMegaSet && canMegaSet.has(p)) {
+      const megaD = cache['mega_' + p] || CACHE['mega_' + p];
+      if (megaD && megaD.stats.spe) {
+        entries.push({
+          name: megaD.name || `Mega ${displayNameFn(p)}`,
+          spe: megaD.stats.spe,
+          sprite: megaD.sprite || d.sprite,
+          key: p,
+          isMega: true,
+        });
+      }
+    }
+  });
+
+  entries.sort((a, b) => b.spe - a.spe);
+
+  const maxSpe = entries[0]?.spe || 1;
+
+  const rows = entries.map(e => {
+    const pct = Math.round(e.spe / maxSpe * 100);
+    const barColor = e.spe >= 110 ? '#c8f053' : e.spe >= 90 ? '#5f8cff' : e.spe >= 70 ? '#f0c832' : '#e05060';
+    const sprite = e.sprite
+      ? `<img src="${e.sprite}" style="width:36px;height:36px;image-rendering:pixelated;flex-shrink:0;cursor:pointer" onclick="${onClickFn}('${e.key}')" alt="">`
+      : `<div style="width:36px;height:36px;flex-shrink:0"></div>`;
+    return `<div style="display:grid;grid-template-columns:40px 1fr 40px;align-items:center;gap:10px;padding:6px 0;border-bottom:1px solid var(--border)">
+      ${sprite}
+      <div>
+        <div style="font-size:12px;font-weight:500;color:var(--text);margin-bottom:4px">
+          ${e.name}${e.isMega?` <span style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;background:rgba(200,240,83,0.15);color:var(--accent);border:1px solid rgba(200,240,83,0.3);border-radius:4px;padding:1px 5px">Mega</span>`:''}
+        </div>
+        <div style="height:5px;background:var(--bg3);border-radius:3px;overflow:hidden">
+          <div style="width:${pct}%;height:100%;background:${barColor};border-radius:3px"></div>
+        </div>
+      </div>
+      <div style="font-family:'Space Mono',monospace;font-size:13px;font-weight:700;color:${barColor};text-align:right">${e.spe}</div>
+    </div>`;
+  }).join('');
+
+  return `<div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--card-r);padding:20px">
+    <div style="font-size:15px;font-weight:600;color:var(--text);margin-bottom:4px">Speed tiers</div>
+    <div style="font-size:12px;color:var(--muted);margin-bottom:16px">Fastest to slowest · Mega forms listed separately</div>
+    ${rows}
+  </div>`;
+}
+
+// ── SEASON 2 DATA ──────────────────────────────────────────────────────
+const S2_TEAMS = {
+  flick:     { name:'Flick',     teamName:"Flick's Team",     pokemon:['delphox','milotic','venusaur','typhlosion-hisui','meowstic-male','gliscor','weavile','samurott-hisui','tinkaton','araquanid'] },
+  wyatt:     { name:'Wyatt',     teamName:'Sage Town Slows',  pokemon:['gholdengo','talonflame','blastoise','krookodile','klefki','pinsir','ceruledge','sceptile','tauros-paldea-aqua','altaria'] },
+  jake:      { name:'Jake',      teamName:"Motor City Mausholds", pokemon:['metagross','ninetales-alola','blaziken','hydreigon','kangaskhan','tsareena','empoleon','arcanine-hisui','aegislash','toxicroak'] },
+  sam:       { name:'Sam',       teamName:"Big Apple Hydrapples",  pokemon:['scrafty','froslass','clefable','armarouge','meowscarada','azumarill','jolteon','goodra-hisui','lopunny','arcanine'] },
+  jackie:    { name:'Jackie',    teamName:"Jackie's Team",    pokemon:['tyranitar','primarina','mamoswine','gengar','corviknight','charizard','toxapex','gallade','mr-rime','wyrdeer'] },
+  deshans:   { name:'Deshans',   teamName:"C-City Charcadets",pokemon:['eelektross','pelipper','lycanroc-dusk','excadrill','mimikyu','hatterene','skeledirge','drampa','espathra','abomasnow'] },
+  montemole: { name:'MonteMole', teamName:"MonteMole's Team", pokemon:['sableye','aerodactyl','annihilape','mawile','torkoal','politoed','starmie','kommo-o','pyroar','vivillon'] },
+  eli:       { name:'Eli',       teamName:"Emerald City Empoleons", pokemon:['malamar','volcarona','glimmora','meganium','oranguru','noivern','liepard','palafin','houndstone','hippowdon'] },
+  tim:       { name:'Tim',       teamName:"Taipei Taiphlosions", pokemon:['maushold','dragonite','gardevoir','scizor','gyarados','dragapult','chandelure','raichu','chesnaught','golurk'] },
+};
+
+const S2_API_SLUG = {
+  'typhlosion-hisui':  'typhlosion-hisui',
+  'meowstic-male':     'meowstic-male',
+  'samurott-hisui':    'samurott-hisui',
+  'ninetales-alola':   'ninetales-alola',
+  'tauros-paldea-aqua':'tauros-paldea-aqua',
+  'arcanine-hisui':    'arcanine-hisui',
+  'aegislash':         'aegislash-shield',
+  'lycanroc-dusk':     'lycanroc-dusk',
+  'goodra-hisui':      'goodra-hisui',
+  'kommo-o':           'kommo-o',
+  'mr-rime':           'mr-rime',
+  'palafin':           'palafin-zero',
+  'maushold':          'maushold-family-of-four',
+};
+
+const S2_ALT_FORMS = {
+  'aegislash': [
+    { label:'Shield', apiSlug:'aegislash-shield' },
+    { label:'Blade',  apiSlug:'aegislash-blade'  },
+  ],
+  'palafin': [
+    { label:'Zero', apiSlug:'palafin-zero' },
+    { label:'Hero', apiSlug:'palafin-hero' },
+  ],
+};
+
+const S2_TRAINERS = {
+  flick:     { name:'Flick',     championsId:null, switchId:null, discord:'Flick' },
+  wyatt:     { name:'Wyatt',     championsId:'0853 7544 9900', switchId:'SW-0753-1737-4306', discord:'booerns' },
+  jake:      { name:'Jake',      championsId:null, switchId:null, discord:'ajaxislemons' },
+  sam:       { name:'Sam',       championsId:'4234 1744 6458', switchId:'SW-1425-0854-2900', discord:'Taffy Lee Fubbins' },
+  jackie:    { name:'Jackie',    championsId:null, switchId:null, discord:'JackiePaper' },
+  deshans:   { name:'Deshans',   championsId:'1845 5200 2383', switchId:'SW-2372-7344-3332', discord:'Aura' },
+  montemole: { name:'MonteMole', championsId:null, switchId:null, discord:'MonteMole' },
+  eli:       { name:'Eli',       championsId:'7609 7098 9181', switchId:'SW-1254-5136-0241', discord:'Eli | ThatsNoMun' },
+  tim:       { name:'Tim',       championsId:'6309 9377 9475', switchId:'SW-2498-4550-2900', discord:'Taymooth' },
+};
+
+const S2_CACHE = {};
+
+async function fetchPokeS2(key) {
+  if (S2_CACHE[key]) return S2_CACHE[key];
+  const slug = S2_API_SLUG[key] || key;
+  try {
+    const r = await fetch(`https://pokeapi.co/api/v2/pokemon/${slug}`);
+    if (!r.ok) throw 0;
+    const d = await r.json();
+    const abilityData = await Promise.all(
+      d.abilities.map(async a => {
+        try {
+          const ar = await fetch(a.ability.url);
+          const ad = await ar.json();
+          const engEntry = ad.effect_entries.find(e=>e.language.name==='en');
+          return { name:a.ability.name.replace(/-/g,' ').replace(/\b\w/g,l=>l.toUpperCase()), isHidden:a.is_hidden, desc:engEntry?.short_effect||'' };
+        } catch { return { name:a.ability.name, isHidden:a.is_hidden, desc:'' }; }
+      })
+    );
+    S2_CACHE[key] = { name:d.name, sprite:d.sprites.front_default, types:d.types.map(t=>t.type.name), stats:{hp:d.stats[0].base_stat,atk:d.stats[1].base_stat,def:d.stats[2].base_stat,spa:d.stats[3].base_stat,spd:d.stats[4].base_stat,spe:d.stats[5].base_stat}, abilities:abilityData };
+  } catch { S2_CACHE[key] = { name:key, sprite:null, types:[], stats:{hp:0,atk:0,def:0,spa:0,spd:0,spe:0}, abilities:[] }; }
+  return S2_CACHE[key];
+}
+
+async function fetchAltFormS2(key) {
+  const forms = S2_ALT_FORMS[key]; if (!forms) return;
+  await Promise.allSettled(forms.map(async f => {
+    const ck = `alt_${key}_${f.label}`;
+    if (S2_CACHE[ck]) return;
+    try {
+      const r = await fetch(`https://pokeapi.co/api/v2/pokemon/${f.apiSlug}`);
+      if (!r.ok) throw 0;
+      const d = await r.json();
+      S2_CACHE[ck] = { name:d.name, sprite:d.sprites.front_default, types:d.types.map(t=>t.type.name), stats:{hp:d.stats[0].base_stat,atk:d.stats[1].base_stat,def:d.stats[2].base_stat,spa:d.stats[3].base_stat,spd:d.stats[4].base_stat,spe:d.stats[5].base_stat}, abilities:[] };
+    } catch { S2_CACHE[`alt_${key}_${f.label}`] = null; }
+  }));
+}
+
+// ── SEASON SWITCHING ────────────────────────────────────────────────────
+let activeSeason = 2;
+
+function setSeason(s) {
+  activeSeason = s;
+  // Update header buttons
+  const s1b = document.getElementById('s1-btn'), s2b = document.getElementById('s2-btn');
+  s1b.style.background = s===1 ? 'var(--accent)' : 'transparent';
+  s1b.style.color = s===1 ? '#0d0f14' : 'var(--muted)';
+  s2b.style.background = s===2 ? 'var(--accent)' : 'transparent';
+  s2b.style.color = s===2 ? '#0d0f14' : 'var(--muted)';
+  document.getElementById('season-title').textContent = `Season ${s}`;
+  // Update link
+  const link = document.getElementById('league-link');
+  link.href = s===1 ? 'https://poke.inhouseboyz.com/league/siebert1' : 'https://poke.inhouseboyz.com/league/3bffbe9bf515';
+  // Reset to overview
+  currentView = 'overview';
+  renderNav();
+  if (s===1) renderOverview();
+  else renderS2Overview();
+}
+
+// ── SEASON 2 RENDER FUNCTIONS ──────────────────────────────────────────
+function s2dn(name) {
+  const overrides = {
+    'typhlosion-hisui':'H-Typhlosion','meowstic-male':'Meowstic (M)','samurott-hisui':'H-Samurott',
+    'ninetales-alola':'A-Ninetales','tauros-paldea-aqua':'Tauros (Aqua)','arcanine-hisui':'H-Arcanine',
+    'aegislash':'Aegislash','lycanroc-dusk':'Lycanroc-Dusk','goodra-hisui':'H-Goodra',
+    'kommo-o':'Kommo-o','mr-rime':'Mr. Rime','palafin':'Palafin','maushold':'Maushold',
+  };
+  return overrides[name] || name.replace(/-/g,' ').replace(/\b\w/g,l=>l.toUpperCase());
+}
+
+function renderS2Overview() {
+  const cards = Object.entries(S2_TEAMS).map(([k,t])=>{
+    const types = t.pokemon.flatMap(p=>S2_CACHE[p]?.types||[]);
+    const tc={}; types.forEach(tp=>tc[tp]=(tc[tp]||0)+1);
+    const topT = Object.entries(tc).sort((a,b)=>b[1]-a[1]).slice(0,4).map(([tp])=>tpill(tp)).join('');
+    const avg = t.pokemon.length ? Math.round(t.pokemon.reduce((s,p)=>{const d=S2_CACHE[p];return s+(d?bst(d.stats):0);},0)/t.pokemon.length) : '–';
+    const isCustom = t.teamName !== `${t.name}'s Team` && t.teamName !== `${t.name}' Team`;
+    return `<div class="overview-card" onclick="setS2View('${k}')">
+      <div class="ov-name">${t.teamName}</div>
+      ${isCustom?`<div style="font-size:11px;color:var(--muted);margin-bottom:2px">${t.name}</div>`:''}
+      <div class="ov-count" style="margin-bottom:8px">10 Pokémon</div>
+      <div class="ov-types">${topT}</div>
+      <div class="ov-bst">avg BST <strong>${avg}</strong></div>
+    </div>`;
+  }).join('');
+  document.getElementById('view').innerHTML = `<div class="overview-grid">${cards}</div>`;
+}
+
+function renderS2Team(key) {
+  const t = S2_TEAMS[key];
+  const trainer = S2_TRAINERS[key] || {};
+  const sub = rosterSubView['s2_'+key] || 'roster';
+  const isCustom = t.teamName !== `${t.name}'s Team` && t.teamName !== `${t.name}' Team`;
+
+  function idChip(label, val) {
+    return `<div class="trainer-id-chip"><div class="trainer-id-label">${label}</div>${val?`<div class="trainer-id-val">${val}</div>`:`<div class="trainer-id-missing">Not set</div>`}</div>`;
+  }
+
+  document.getElementById('view').innerHTML = `
+    <div class="trainer-card">
+      <div class="trainer-avatar">🎮</div>
+      <div class="trainer-main">
+        <div class="trainer-team-name">${t.teamName}</div>
+        ${isCustom?`<div class="trainer-owner-label">Owner: ${t.name}</div>`:`<div class="trainer-owner-label">${t.name}</div>`}
+        <div class="trainer-ids">
+          ${idChip('Champions ID', trainer.championsId)}
+          ${idChip('Switch ID', trainer.switchId)}
+          ${idChip('Discord', trainer.discord)}
+        </div>
+      </div>
+    </div>
+    <div class="roster-header" style="margin-top:0"><div style="display:flex;gap:6px">
+      <button class="sub-tab${sub==='roster'?' active':''}" onclick="setS2SubView('${key}','roster')">Roster</button>
+      <button class="sub-tab${sub==='typechart'?' active':''}" onclick="setS2SubView('${key}','typechart')">Type coverage</button>
+      <button class="sub-tab${sub==='speeds'?' active':''}" onclick="setS2SubView('${key}','speeds')">Speeds</button>
+    </div><div class="roster-hint">click card for full stats ↗</div></div>
+    <div id="sub-content"></div>`;
+  renderS2SubView(key, sub);
+}
+
+window.setS2SubView = function(key, sub) {
+  rosterSubView['s2_'+key] = sub;
+  document.querySelectorAll('.sub-tab').forEach(b=>b.classList.remove('active'));
+  const label = sub==='roster'?'Roster':sub==='speeds'?'Speeds':'Type';
+  document.querySelectorAll('.sub-tab').forEach(b=>{ if(b.textContent.includes(label)) b.classList.add('active'); });
+  renderS2SubView(key, sub);
+};
+
+function renderS2SubView(key, sub) {
+  const t = S2_TEAMS[key];
+  const el = document.getElementById('sub-content');
+  if (sub === 'roster') {
+    const cards = t.pokemon.map(p=>{
+      const d = S2_CACHE[p];
+      const sprite = d?.sprite?`<img class="poke-sprite" src="${d.sprite}" alt="">`:`<div class="poke-sprite-ph">◈</div>`;
+      const types = (d?.types||[]).map(tp=>tpill(tp)).join('');
+      const total = d?bst(d.stats):0;
+      const canM = CAN_MEGA.has(p);
+      return `<div class="poke-card" onclick="showS2Modal('${p}')">
+        ${canM?'<div class="mega-badge">Mega</div>':''}
+        ${sprite}<div class="poke-name">${s2dn(p)}</div>
+        <div class="type-row">${types}</div>
+        <div class="bst-num">BST ${total}</div>
+      </div>`;
+    }).join('');
+    el.innerHTML = `<div class="pokemon-grid">${cards}</div>`;
+  } else if (sub === 'typechart') {
+    // Type chart — reuse same logic but with S2_CACHE
+    const ALL_TYPES = ['normal','fire','water','electric','grass','ice','fighting','poison','ground','flying','psychic','bug','rock','ghost','dragon','dark','steel','fairy'];
+    const typeData = ALL_TYPES.map(atk => {
+      const perPoke = t.pokemon.map(p => {
+        const d = S2_CACHE[p]; if (!d||!d.types.length) return {p,mult:1};
+        const eff = TYPE_EFF[atk]||{}; let m=1;
+        d.types.forEach(def=>{if(eff[def]!==undefined) m*=eff[def];});
+        return {p,mult:m};
+      });
+      const immunes=perPoke.filter(x=>x.mult===0), dblResist=perPoke.filter(x=>x.mult===0.25),
+            resists=perPoke.filter(x=>x.mult===0.5), weaks=perPoke.filter(x=>x.mult===2), dblWeaks=perPoke.filter(x=>x.mult===4);
+      const score=immunes.length*3+dblResist.length*2+resists.length*1-weaks.length*1-dblWeaks.length*2;
+      return {atk,score,immunes,dblResist,resists,weaks,dblWeaks};
+    }).sort((a,b)=>b.score-a.score);
+    const maxAbs = Math.max(...typeData.map(x=>Math.abs(x.score)),1);
+    function spriteRow(arr,label,color){
+      if(!arr.length) return '';
+      const icons=arr.map(({p})=>{const d=S2_CACHE[p];return d?.sprite?`<img src="${d.sprite}" title="${s2dn(p)}" style="width:28px;height:28px;image-rendering:pixelated;cursor:pointer" onclick="event.stopPropagation();showS2Modal('${p}')">`:''}).join('');
+      return `<div style="display:flex;align-items:center;gap:6px;margin-bottom:3px"><span style="font-size:9px;color:${color};width:54px;flex-shrink:0;text-align:right">${label}</span><div style="display:flex;gap:2px;flex-wrap:wrap">${icons}</div></div>`;
+    }
+    const rows = typeData.map(({atk,score,immunes,dblResist,resists,weaks,dblWeaks})=>{
+      const pct=Math.round(Math.abs(score)/maxAbs*100);
+      const barColor=score>3?'#1D9E75':score>0?'#5f8cff':score<-3?'#E24B4A':'#f0c832';
+      const scoreLabel=score===0?'±0':(score>0?'+':'')+score;
+      const tipId=`s2tc-${atk}-${key}`;
+      const tooltipContent=[spriteRow(immunes,'0× immune','#c0b0e0'),spriteRow(dblResist,'¼× resist','#60d070'),spriteRow(resists,'½× resist','#70a8f0'),spriteRow(weaks,'2× weak','#f0c832'),spriteRow(dblWeaks,'4× weak','#f08060')].filter(Boolean).join('');
+      return `<div class="tc-bar-row" onmouseenter="showTcTooltip(event,'${tipId}')" onmouseleave="hideTcTooltip()" onclick="toggleTcTooltip(event,'${tipId}')">
+        <div class="tc-bar-type t-${atk}">${atk}</div>
+        <div class="tc-bar-track"><div class="tc-bar-center"></div>
+          <div style="position:absolute;top:0;${score>=0?'left:50%':'right:50%'};width:${Math.round(pct/2)}%;height:100%;background:${barColor};border-radius:${score>=0?'0 3px 3px 0':'3px 0 0 3px'}"></div>
+        </div>
+        <div class="tc-bar-score" style="color:${barColor}">${scoreLabel}</div>
+        <div class="tc-tooltip" id="${tipId}" style="display:none">${tooltipContent||'<span style="font-size:11px;color:var(--muted)">All neutral</span>'}</div>
+      </div>`;
+    }).join('');
+    el.innerHTML=`<div class="type-chart-wrap"><div class="tc-title">Defensive type coverage</div><div class="tc-sub">Positive score = team resists this type. Hover or tap a row to see which Pokémon are affected.</div><div style="display:flex;justify-content:space-between;font-size:10px;color:var(--muted);font-family:'Space Mono',monospace;margin-bottom:8px;padding:0 56px 0 72px"><span>← more weak</span><span>more resistant →</span></div>${rows}</div>`;
+  } else if (sub === 'speeds') {
+    el.innerHTML = renderSpeedsTab(t.pokemon, S2_CACHE, MEGAS, CAN_MEGA, s2dn, 'showS2Modal');
+  }
+}
+
+function renderS2All() {
+  const blocks = Object.entries(S2_TEAMS).map(([key,t])=>{
+    const rows = t.pokemon.map(p=>{
+      const d=S2_CACHE[p];
+      const sprite=d?.sprite?`<img class="mini-sprite" src="${d.sprite}" alt="">`:`<div class="mini-sprite" style="display:flex;align-items:center;justify-content:center;opacity:0.3;font-size:18px">◈</div>`;
+      const types=(d?.types||[]).map(tp=>tpill(tp)).join('');
+      return `<div class="mini-row" onclick="showS2Modal('${p}')">${sprite}<span class="mini-name">${s2dn(p)}</span><div class="mini-types">${types}</div></div>`;
+    }).join('');
+    const isCustom = t.teamName !== `${t.name}'s Team` && t.teamName !== `${t.name}' Team`;
+    return `<div class="all-block"><div class="all-block-name">${t.teamName}${isCustom?`<span style="font-weight:400;color:var(--muted);font-size:11px;margin-left:6px">${t.name}</span>`:''}</div>${rows}</div>`;
+  }).join('');
+  document.getElementById('view').innerHTML = `<div class="all-grid">${blocks}</div>`;
+}
+
+function showS2Modal(key) {
+  const d = S2_CACHE[key]; if (!d) return;
+  let owner = '';
+  for (const [k,t] of Object.entries(S2_TEAMS)) { if(t.pokemon.includes(key)){owner=t.name;break;} }
+  const altForms = S2_ALT_FORMS[key] || null;
+  const hasMega = CAN_MEGA.has(key);
+  const megaData = hasMega ? CACHE['mega_' + key] : null;
+  const serebii = serebiiSlug(key);
+  const pikalytics = pikalyticsUrl(key);
+  let tabs=[], statBlocks='';
+  if (altForms) {
+    tabs = altForms.map(f=>f.label);
+    statBlocks = altForms.map(f=>{ const fd=S2_CACHE[`alt_${key}_${f.label}`]; return buildStatBlock(fd,`s2alt_${f.label}`); }).join('');
+  } else {
+    tabs = ['Base'];
+    statBlocks = buildStatBlock(d,'s2base');
+    if (hasMega && megaData) {
+      tabs.push('Mega');
+      statBlocks += buildStatBlock(megaData,'s2mega');
+    }
+  }
+  const firstTabId = altForms?`s2alt_${altForms[0].label}`:'s2base';
+  const tabHTML = tabs.length>1?`<div class="stat-toggle" id="modal-tabs">${tabs.map((lbl,i)=>{const id=altForms?`s2alt_${lbl}`:lbl==='Base'?'s2base':'s2mega';return`<button class="stat-tab${i===0?' active':''}" onclick="switchModalTab('${id}',this)">${lbl}</button>`;}).join('')}</div>`:'';
+  const displaySprite = altForms?(S2_CACHE[`alt_${key}_${altForms[0].label}`]?.sprite||d.sprite):d.sprite;
+  const el = document.createElement('div');
+  el.className='modal-overlay';
+  el.innerHTML=`<div class="modal">
+    <button class="modal-close" onclick="this.closest('.modal-overlay').remove()">✕</button>
+    <img class="modal-sprite" id="modal-spr" src="${displaySprite||''}" alt="" ${displaySprite?'':'style="display:none"'}>
+    <div class="modal-name">${s2dn(key)}</div>
+    <div class="modal-links">
+      <a class="modal-link" href="${serebii}" target="_blank">Serebii ↗</a>
+      <a class="modal-link" href="${pikalytics}" target="_blank">Pikalytics ↗</a>
+    </div>
+    ${tabHTML}${statBlocks}
+    <div class="owner-tag">Drafted by <strong>${owner}</strong></div>
+  </div>`;
+  const firstBlock=el.querySelector(`#stats-${firstTabId}`);
+  if(firstBlock) firstBlock.style.display='block';
+  el.addEventListener('click',e=>{if(e.target===el)el.remove();});
+  document.body.appendChild(el);
+}
+
+let s2CurrentView = 'overview';
+function setS2View(v) {
+  s2CurrentView = v;
+  renderNav();
+  if (v==='overview') renderS2Overview();
+  else if (v==='all') renderS2All();
+  else renderS2Team(v);
+}
+
+// ── UPDATED RENDER NAV (season-aware) ─────────────────────────────────
+function renderNav() {
+  if (activeSeason === 1) {
+    const tabs = [['overview','Overview'],['schedule','Schedule'],['all','All teams'],['eli','Eli'],['jake','Jake'],['deshans','Deshans'],['tim','Tim'],['sam','Sam'],['wyatt','Wyatt']];
+    document.getElementById('nav').innerHTML = tabs.map(([k,l])=>`<button class="nav-btn${currentView===k?' active':''}" onclick="setView('${k}')">${l}</button>`).join('');
+  } else {
+    const tabs = [['overview','Overview'],['all','All teams'],['flick','Flick'],['wyatt','Wyatt'],['jake','Jake'],['sam','Sam'],['jackie','Jackie'],['deshans','Deshans'],['montemole','MonteMole'],['eli','Eli'],['tim','Tim']];
+    document.getElementById('nav').innerHTML = tabs.map(([k,l])=>`<button class="nav-btn${s2CurrentView===k?' active':''}" onclick="setS2View('${k}')">${l}</button>`).join('');
+  }
+}
+
 // ── INIT ───────────────────────────────────────────────────────────────
 async function init() {
   document.getElementById('view').innerHTML = '<div class="loading-msg">Loading league data...</div>';
   renderNav();
+  // Load Season 2 first (default view)
+  const allS2 = [...new Set(Object.values(S2_TEAMS).flatMap(t=>t.pokemon))];
+  await Promise.allSettled(allS2.map(p=>fetchPokeS2(p)));
+  await Promise.allSettled(allS2.filter(p=>S2_ALT_FORMS[p]).map(p=>fetchAltFormS2(p)));
+  await Promise.allSettled(allS2.filter(p=>CAN_MEGA.has(p)).map(p=>fetchMega(p)));
+  renderS2Overview();
+  // Load Season 1 in background
   const all = [...new Set(Object.values(TEAMS).flatMap(t=>t.pokemon))];
-  // Fetch base pokemon
-  await Promise.allSettled(all.map(p=>fetchPoke(p)));
-  // Fetch megas
-  await Promise.allSettled(all.filter(p=>CAN_MEGA.has(p)).map(p=>fetchMega(p)));
-  // Fetch alt forms (Aegislash, Palafin)
-  await Promise.allSettled(all.filter(p=>ALT_FORMS[p]).map(p=>fetchAltForms(p)));
-  setView('overview');
+  Promise.allSettled(all.map(p=>fetchPoke(p))).then(()=>
+    Promise.allSettled(all.filter(p=>CAN_MEGA.has(p)).map(p=>fetchMega(p))).then(()=>
+      Promise.allSettled(all.filter(p=>ALT_FORMS[p]).map(p=>fetchAltForms(p)))
+    )
+  );
 }
 
 init();
