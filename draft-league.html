@@ -171,6 +171,16 @@
   .t-normal  { background: rgba(160,160,140,0.2); color: #b8b8a8; }
   .t-fairy   { background: rgba(220,130,180,0.2); color: #e090c0; }
 
+  .typechart-section { margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--border); }
+  .tcs-row { display: flex; align-items: flex-start; gap: 6px; margin-bottom: 6px; }
+  .tcs-row:last-child { margin-bottom: 0; }
+  .tcs-label { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); font-family: 'Space Mono', monospace; width: 56px; flex-shrink: 0; padding-top: 3px; }
+  .tcs-pills { display: flex; flex-wrap: wrap; gap: 4px; }
+  .tcs-mult { font-weight: 700; margin-left: 2px; font-family: 'Space Mono', monospace; }
+  .tcs-mult.neg { color: #ffb0bd; }
+  .tcs-mult.pos { color: #b8f078; }
+  .tcs-mult.none { color: #aab4c8; }
+
   .modal-stat-block { }
 
   /* Trainer info */
@@ -389,6 +399,13 @@ const MEGAS = {
   'chesnaught':       { name:'Mega Chesnaught',  apiSlug:null, types:['grass','fighting'],
                         hardStats:{hp:88,atk:137,def:172,spa:74,spd:115,spe:44},
                         abilities:[{name:'Bulletproof',isHidden:false,desc:'Protects from ball and bomb moves like Shadow Ball, Focus Blast, and Sludge Bomb.'}] },
+  // ── S2 Raichu X / Charizard X / Blaziken (PokeAPI) ──
+  'raichu':           { name:'Mega Raichu X',    apiSlug:'raichu-mega-x', types:['electric'],
+                        abilities:[{name:'Electric Surge',isHidden:false,desc:'Changes the terrain to Electric Terrain on entry. Boosts Electric moves by 50% and prevents Electric-type Pokémon from sleeping.'}] },
+  'charizard':        { name:'Mega Charizard X', apiSlug:'charizard-mega-x', types:['fire','dragon'],
+                        abilities:[{name:'Tough Claws',isHidden:false,desc:'Boosts the power of contact moves by 33%.'}] },
+  'blaziken':         { name:'Mega Blaziken',    apiSlug:'blaziken-mega', types:['fire','fighting'],
+                        abilities:[{name:'Speed Boost',isHidden:false,desc:'Raises this Pokémon\'s Speed by 1 stage at the end of every turn.'}] },
 };
 
 // Pokemon that can mega — keys used in TEAMS rosters
@@ -778,6 +795,30 @@ function buildAbilitiesHTML(abilities) {
   return `<div class="abilities-section"><div class="abilities-label">Abilities</div>${rows}</div>`;
 }
 
+function multLabel(m){ return m===0?'×0':m===0.25?'¼×':m===0.5?'½×':m===2?'2×':m===4?'4×':m+'×'; }
+function buildTypeChartHTML(types) {
+  if (!types || !types.length) return '';
+  const chart = getDefenseChart(types);
+  const groups = { immune: [], resist: [], weak: [] };
+  Object.entries(chart).forEach(([t,m]) => {
+    if (m === 0) groups.immune.push([t,m]);
+    else if (m < 1) groups.resist.push([t,m]);
+    else if (m > 1) groups.weak.push([t,m]);
+  });
+  if (!groups.immune.length && !groups.resist.length && !groups.weak.length) return '';
+  const sortFn = (a,b) => a[1]-b[1] || a[0].localeCompare(b[0]);
+  groups.weak = groups.weak.sort((a,b) => b[1]-a[1] || a[0].localeCompare(b[0]));
+  groups.resist = groups.resist.sort(sortFn);
+  const pill = ([t,m]) => `<span class="type-pill t-${t}">${t}<span class="tcs-mult ${m>1?'neg':m<1?'pos':'none'}">${multLabel(m)}</span></span>`;
+  const row = (lbl, arr) => arr.length ? `<div class="tcs-row"><span class="tcs-label">${lbl}</span><div class="tcs-pills">${arr.map(pill).join('')}</div></div>` : '';
+  return `<div class="typechart-section">
+    <div class="abilities-label">Strengths &amp; weaknesses</div>
+    ${row('Immune', groups.immune)}
+    ${row('Resists', groups.resist)}
+    ${row('Weak to', groups.weak)}
+  </div>`;
+}
+
 function buildStatBlock(data, label) {
   if (!data) return '';
   const s = data.stats;
@@ -790,6 +831,7 @@ function buildStatBlock(data, label) {
     </div>
     ${rows}
     <div class="bst-total"><span>BST</span><strong>${total}</strong></div>
+    ${buildTypeChartHTML(data.types)}
     ${buildAbilitiesHTML(data.abilities)}
   </div>`;
 }
