@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>album of the day — wyattmakesstuff</title>
+  <link rel="icon" type="image/svg+xml" href="../favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Playfair+Display:ital,wght@0,700;1,400&display=swap" rel="stylesheet" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #09090f;
+      --surface: #10101a;
+      --border: #1e1e30;
+      --text: #e2e0f0;
+      --muted: #52506e;
+      --accent: #a78bfa;
+      --accent-2: #60a5fa;
+      --accent-dim: rgba(167, 139, 250, 0.08);
+      --accent-2-dim: rgba(96, 165, 250, 0.06);
+      --font-mono: 'DM Mono', monospace;
+      --font-display: 'Playfair Display', serif;
+    }
+
+    html, body { height: 100%; }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: var(--font-mono);
+      font-weight: 300;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+    }
+
+    /* Grain overlay (matches site) */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='true'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      background-repeat: repeat;
+      background-size: 128px;
+      pointer-events: none;
+      z-index: 999;
+      opacity: 0.45;
+    }
+
+    .glow-1, .glow-2 { position: fixed; border-radius: 50%; pointer-events: none; z-index: 0; }
+    .glow-1 {
+      top: -20%; left: 15%; width: 700px; height: 700px;
+      background: radial-gradient(circle, rgba(167, 139, 250, 0.06) 0%, transparent 65%);
+    }
+    .glow-2 {
+      top: 10%; right: 5%; width: 500px; height: 500px;
+      background: radial-gradient(circle, rgba(96, 165, 250, 0.05) 0%, transparent 65%);
+    }
+
+    /* ── NAV ── */
+    nav.site-nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      height: 60px;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      border-bottom: 1px solid var(--border);
+      background: rgba(9, 9, 15, 0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+
+    .nav-inner {
+      max-width: 900px;
+      margin: 0 auto;
+      width: 100%;
+      padding: 0 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .nav-logo {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      color: var(--text);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+      transition: color 0.2s;
+    }
+    .nav-logo:hover { color: var(--accent); }
+    .nav-logo .logo-tilde { color: var(--accent); font-size: 1rem; }
+
+    .nav-links { display: flex; align-items: center; gap: 0.15rem; list-style: none; }
+    .nav-drop { position: relative; }
+
+    .nav-links a {
+      display: block;
+      padding: 0.4rem 0.85rem;
+      font-size: 0.72rem;
+      font-weight: 400;
+      letter-spacing: 0.06em;
+      color: var(--muted);
+      text-decoration: none;
+      border-radius: 3px;
+      transition: color 0.18s, background 0.18s;
+    }
+    .nav-links a:hover { color: var(--text); background: var(--accent-dim); }
+    .nav-links a.active { color: var(--accent); }
+
+    .nav-drop summary {
+      display: block;
+      padding: 0.4rem 0.85rem;
+      font-size: 0.72rem;
+      font-weight: 400;
+      letter-spacing: 0.06em;
+      color: var(--muted);
+      border-radius: 3px;
+      list-style: none;
+      cursor: pointer;
+      user-select: none;
+      transition: color 0.18s, background 0.18s;
+    }
+    .nav-drop summary::-webkit-details-marker { display: none; }
+    .nav-drop summary:hover, .nav-drop[open] summary { color: var(--text); background: var(--accent-dim); }
+    .nav-drop summary .caret {
+      display: inline-block;
+      font-size: 0.55rem;
+      margin-left: 0.25rem;
+      color: var(--accent);
+      transition: transform 0.15s;
+    }
+    .nav-drop[open] summary .caret { transform: rotate(180deg); }
+    .nav-drop .menu {
+      position: absolute;
+      top: calc(100% + 6px);
+      right: 0;
+      min-width: 240px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 0.4rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.15rem;
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.55);
+      z-index: 200;
+    }
+    .menu a {
+      display: block;
+      padding: 0.5rem 0.65rem;
+      border-radius: 3px;
+      text-decoration: none;
+      transition: background 0.15s;
+    }
+    .menu a:hover { background: var(--accent-dim); }
+    .menu .menu-name {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      font-size: 0.72rem;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      color: var(--text);
+    }
+    .menu .menu-name .arrow { font-size: 0.65rem; color: var(--muted); }
+    .menu .menu-desc {
+      display: block;
+      font-size: 0.62rem;
+      line-height: 1.5;
+      color: var(--muted);
+      margin-top: 0.15rem;
+      padding-right: 1.2rem;
+    }
+    .tag {
+      font-size: 0.55rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 0.1rem 0.4rem;
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      white-space: nowrap;
+    }
+    .tag.gh { color: var(--accent-2); border-color: rgba(96, 165, 250, 0.3); }
+
+    /* ── MAIN ── */
+    main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 4rem 2rem 3rem;
+      position: relative;
+      z-index: 1;
+      max-width: 900px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .label {
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 2.5rem;
+    }
+    .label span { color: var(--accent); }
+
+    /* ── THE PICK ── */
+    .pick {
+      max-width: 680px;
+      display: flex;
+      align-items: flex-start;
+      gap: 2.5rem;
+    }
+
+    .pick-cover {
+      width: 240px;
+      flex-shrink: 0;
+      aspect-ratio: 1;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), 0 0 24px rgba(167, 139, 250, 0.12);
+    }
+
+    .pick-details { min-width: 0; }
+    .pick-cover img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      border-radius: 3px;
+    }
+
+    .pick-title {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: clamp(2.2rem, 6vw, 3.6rem);
+      line-height: 1.05;
+      letter-spacing: -0.02em;
+      color: var(--text);
+      margin-bottom: 0.5rem;
+    }
+
+    .pick-artist {
+      font-size: 1rem;
+      color: var(--muted);
+      margin-bottom: 0.25rem;
+    }
+
+    .pick-year {
+      font-size: 0.8rem;
+      font-style: italic;
+      color: var(--muted);
+      opacity: 0.7;
+    }
+
+    .pick-note {
+      font-size: 0.75rem;
+      color: var(--muted);
+      margin-top: 0.75rem;
+      opacity: 0.85;
+    }
+
+
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin: 2rem 0;
+    }
+    .divider-line {
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(to right, var(--border), transparent);
+    }
+    .divider-gem {
+      width: 6px; height: 6px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      transform: rotate(45deg);
+      border-radius: 1px;
+      box-shadow: 0 0 8px rgba(167, 139, 250, 0.4);
+    }
+
+    /* tag chips */
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 1.75rem;
+    }
+    .tag {
+      display: inline-block;
+      padding: 0.25rem 0.7rem;
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      font-size: 0.65rem;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      text-transform: lowercase;
+    }
+    .tag.mood { color: var(--accent); border-color: rgba(167, 139, 250, 0.25); }
+    .tag.pace { color: var(--accent-2); border-color: rgba(96, 165, 250, 0.25); }
+
+    .why {
+      font-size: 0.7rem;
+      color: var(--muted);
+      margin-bottom: 2rem;
+      opacity: 0.8;
+    }
+    .why::before { content: '↳ '; color: var(--accent); }
+
+    /* action buttons */
+    .actions { display: flex; flex-wrap: wrap; gap: 0.75rem; }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.55rem 1.1rem;
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      font-weight: 400;
+      letter-spacing: 0.05em;
+      color: var(--muted);
+      text-decoration: none;
+      background: transparent;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .btn::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, var(--accent-dim), var(--accent-2-dim));
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+    .btn:hover { border-color: var(--accent); color: var(--accent); }
+    .btn:hover::before { opacity: 1; }
+    .btn.primary { border-color: rgba(167, 139, 250, 0.4); color: var(--accent); }
+    .btn .arrow { font-size: 0.7rem; transition: transform 0.2s; }
+    .btn:hover .arrow { transform: translate(2px, -2px); }
+
+    .empty {
+      color: var(--muted);
+      font-size: 0.9rem;
+      line-height: 1.8;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      position: relative;
+      z-index: 1;
+      padding: 1.25rem 2rem;
+      max-width: 900px;
+      margin: 0 auto;
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px solid var(--border);
+    }
+    .footer-text { font-size: 0.65rem; letter-spacing: 0.1em; color: var(--muted); }
+    .footer-text a { color: var(--muted); text-decoration: none; transition: color 0.2s; }
+    .footer-text a:hover { color: var(--accent); }
+
+    @media (max-width: 640px) {
+      .pick { flex-direction: column; gap: 1.75rem; }
+      .pick-cover { width: 150px; order: -1; } /* cover stays on top when stacked */
+    }
+
+    @media (max-width: 600px) {
+      footer { flex-direction: column; gap: 0.75rem; align-items: flex-start; }
+      .nav-inner { padding: 0.5rem 1.25rem; }
+    }
+    @media (max-width: 520px) {
+      .nav-logo .logo-text { display: none; }
+      .nav-links a, .nav-drop summary { padding: 0.4rem 0.55rem; }
+      .nav-drop .menu { min-width: 220px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="glow-1"></div>
+  <div class="glow-2"></div>
+
+  <nav class="site-nav">
+    <div class="nav-inner">
+      <a href="../index.html" class="nav-logo">
+        <span class="logo-tilde">~</span><span class="logo-text">wyattmakesstuff</span>
+      </a>
+      <ul class="nav-links">
+        <li><a href="./" class="active">music</a></li>
+        <li class="nav-drop">
+          <details>
+            <summary>ai<span class="caret">▼</span></summary>
+            <div class="menu">
+              <a href="https://github.com/wyattpierson/wms-amongstfriends-recommender" target="_blank" rel="noopener">
+                <span class="menu-name">af recommender <span class="tag gh">github</span><span class="arrow">↗</span></span>
+                <span class="menu-desc">local-LLM album recs, spotify-verified, with a real eval harness</span>
+              </a>
+              <a href="https://github.com/wyattpierson/wms-the-establishment-butler" target="_blank" rel="noopener">
+                <span class="menu-name">the establishment <span class="tag gh">github</span><span class="arrow">↗</span></span>
+                <span class="menu-desc">a local butler agent that answers everything with a white-glove pitch</span>
+              </a>
+              <a href="https://github.com/wyattpierson/wms-tdd-harness" target="_blank" rel="noopener">
+                <span class="menu-name">tdd harness <span class="tag gh">github</span><span class="arrow">↗</span></span>
+                <span class="menu-desc">test-first coding with a human confirmation gate, for local LLMs</span>
+              </a>
+            </div>
+          </details>
+        </li>
+        <li class="nav-drop">
+          <details>
+            <summary>apps<span class="caret">▼</span></summary>
+            <div class="menu">
+              <a href="../amongst-friends/">
+                <span class="menu-name">amongst friends</span>
+                <span class="menu-desc">rate and review anything, with your friends — iOS app</span>
+              </a>
+              <a href="../hassle-free-recipes/">
+                <span class="menu-name">hassle free recipes</span>
+                <span class="menu-desc">your recipes, no ads, no disruptions — iOS app</span>
+              </a>
+            </div>
+          </details>
+        </li>
+        <li class="nav-drop">
+          <details>
+            <summary>other<span class="caret">▼</span></summary>
+            <div class="menu">
+              <a href="./">
+                <span class="menu-name">album of the day</span>
+                <span class="menu-desc">one album, picked for the day</span>
+              </a>
+              <a href="../draft-league/">
+                <span class="menu-name">pokémon draft league</span>
+                <span class="menu-desc">season-by-season tracking for my draft league</span>
+              </a>
+            </div>
+          </details>
+        </li>
+      </ul>
+    </div>
+  </nav>
+
+  <main>
+    <div class="label">album of the <span>day</span></div>
+
+    <div class="pick" id="pick">
+      <!-- populated by js/data.js + js/albums.js + inline script below -->
+      <p class="empty">nothing picked yet — add albums to <code>js/data.js</code></p>
+    </div>
+  </main>
+
+  <footer>
+    <span class="footer-text"><a href="/">wyattmakesstuff.com</a></span>
+    <span class="footer-text" id="attempts-note"></span>
+  </footer>
+
+  <script>
+    // close dropdowns when a link is clicked or when clicking outside
+    document.querySelectorAll('.nav-drop details').forEach(d => {
+      d.querySelectorAll('.menu a').forEach(a =>
+        a.addEventListener('click', () => { d.open = false; }));
+    });
+    document.addEventListener('click', e => {
+      document.querySelectorAll('.nav-drop details[open]').forEach(d => {
+        if (!d.closest('li').contains(e.target)) d.open = false;
+      });
+    });
+  </script>
+
+  <script src="js/data.js"></script>
+  <script src="js/albums.js"></script>
+  <script>
+    function esc(s) {
+      return String(s).replace(/[&<>"']/g, c =>
+        ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    }
+
+    function spotifyUrl(album) {
+      if (!album.spotifyId) return null;
+      // default to album link; override with spotifyType: "track" if needed
+      const type = album.spotifyType || "album";
+      return `https://open.spotify.com/${type}/${album.spotifyId}`;
+    }
+
+    function render() {
+      const el = document.getElementById("pick");
+      const result = pickAlbum();
+
+      if (!result || !result.album) {
+        el.innerHTML = '<p class="empty">the well is dry — add albums to <code>js/data.js</code></p>';
+        return;
+      }
+      const a = result.album;
+      const tags = [
+        ...(a.moods || []).map(m => `<span class="tag mood">${esc(m)}</span>`),
+        ...(a.pace ? [`<span class="tag pace">${esc(a.pace)}</span>`] : []),
+        ...(a.genre || []).map(g => `<span class="tag">${esc(g)}</span>`),
+      ].join("");
+
+      const link = spotifyUrl(a);
+      const linkBtn = link
+        ? `<a class="btn primary" href="${link}" target="_blank" rel="noopener">play on spotify <span class="arrow">↗</span></a>`
+        : `<span class="btn" style="opacity:0.4;cursor:default;">no spotify link yet</span>`;
+
+      el.innerHTML = `
+        <div class="pick-details">
+          <h1 class="pick-title">${esc(a.title)}</h1>
+          <div class="pick-artist">${esc(a.artist)}</div>
+          ${a.year ? `<div class="pick-year">${a.year}</div>` : ""}
+          <div class="divider">
+            <div class="divider-line"></div>
+            <div class="divider-gem"></div>
+          </div>
+          ${tags ? `<div class="tags">${tags}</div>` : ""}
+          ${a.note ? `<div class="pick-note">${esc(a.note)}</div>` : ""}
+          ${result.why && result.why.length ? `<div class="why">${esc(result.why.join(" · "))}</div>` : ""}
+          <div class="actions">
+            ${linkBtn}
+            <button class="btn" id="pick-again">pick again ↻</button>
+          </div>
+        </div>
+        ${a.cover ? `<div class="pick-cover"><img src="${esc(a.cover)}" alt="${esc(a.title)} cover art" /></div>` : ""}
+      `;
+
+      document.getElementById("pick-again").addEventListener("click", () => {
+        bumpAttempts();
+        render();
+      });
+
+      const n = getAttempts();
+      document.getElementById("attempts-note").textContent =
+        n > 0 ? `${n} re-roll${n === 1 ? "" : "s"} today` : "";
+    }
+
+    render();
+  </script>
+
+</body>
+</html>
