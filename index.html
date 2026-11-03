@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="icon" type="image/svg+xml" href="favicon.svg" />
-  <meta name="description" content="Wyatt makes stuff — iOS apps, LLM experiments, music recs, and other stuff" />
+  <meta name="description" content="Wyatt makes stuff — iOS and web apps, LLM experiments, music recs, and other stuff" />
   <title>wyatt makes stuff</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -110,6 +110,7 @@
     }
     .tag.gh { color: var(--accent-2); border-color: rgba(96,165,250,.35); }
     .tag.app { color: var(--accent); border-color: rgba(167,139,250,.4); }
+    .tag.game { color: var(--accent-2); border-color: rgba(96,165,250,.35); }
 
     /* clickable surfaces: the title link stretches over the whole item,
        secondary links sit above it as siblings (no nested anchors) */
@@ -138,6 +139,13 @@
     }
     .card .top { display: flex; align-items: center; justify-content: space-between; gap: .75rem; flex-wrap: wrap; }
     .card .desc { margin-top: .3rem; }
+    .card .sub { display: inline-block; margin-top: .6rem; }
+    .status { margin-top: .6rem; color: var(--accent); font-size: .75rem; }
+
+    /* games: cards with a screenshot up top */
+    .card.game { flex-direction: column; gap: 1rem; }
+    .shot { position: relative; z-index: 2; display: block; width: 100%; }
+    .shot img { display: block; width: 100%; height: auto; border: 1px solid var(--border-hi); border-radius: 8px; }
 
     /* ai + other: rows */
     .rows { list-style: none; display: grid; gap: .75rem; }
@@ -182,6 +190,7 @@
       <a href="index.html" class="nav-logo"><span>~</span><span class="full" style="color:inherit;margin:0">wyattmakesstuff</span></a>
       <ul class="nav-links">
         <li><a href="#apps">apps</a></li>
+        <li><a href="#games">games</a></li>
         <li><a href="#ai">ai</a></li>
         <li><a href="#other">other</a></li>
       </ul>
@@ -204,9 +213,10 @@
           <div>
             <div class="top">
               <a class="main name" href="amongst-friends/">amongst friends</a>
-              <span class="tag app">ios app</span>
+              <span class="tag app">ios + web</span>
             </div>
-            <p class="desc">Rate and review anything, from restaurants to albums to books, with your friends.</p>
+            <p class="desc">Rate and review anything, from restaurants to albums to books, with your friends. On iOS and the web.</p>
+            <a class="sub" href="https://amongstfriends.wyattmakesstuff.com" target="_blank" rel="noopener">open website ↗</a>
           </div>
         </article>
         <article class="item card">
@@ -216,7 +226,38 @@
               <a class="main name" href="hassle-free-recipes/">hassle free recipes</a>
               <span class="tag app">ios app</span>
             </div>
-            <p class="desc">Your recipes with no ads and no disruptions, built for sanity and convience.</p>
+            <p class="desc">Your recipes with no ads and no disruptions, built for sanity and convenience.</p>
+            <p class="status">Submitted for App Store review.</p>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section id="games">
+      <div class="label"><b>///</b> games</div>
+      <div class="apps">
+        <article class="item card game">
+          <a class="shot" href="https://wyattpierson.github.io/wms-games-ice-pokey/" target="_blank" rel="noopener">
+            <img src="./games/ice-pokey.png" alt="Ice Pokéy screenshot" width="1200" height="694" loading="lazy" />
+          </a>
+          <div>
+            <div class="top">
+              <a class="main name" href="https://wyattpierson.github.io/wms-games-ice-pokey/" target="_blank" rel="noopener">ice pokéy</a>
+              <span class="tag game">browser ↗</span>
+            </div>
+            <p class="desc">A pokémon themed roguelike hockey game. Play it in your browser.</p>
+          </div>
+        </article>
+        <article class="item card game">
+          <a class="shot" href="https://wyattpierson.github.io/wms-games-poke-bowl/" target="_blank" rel="noopener">
+            <img src="./games/poke-bowl.png" alt="Poke Bowl screenshot" width="1200" height="639" loading="lazy" />
+          </a>
+          <div>
+            <div class="top">
+              <a class="main name" href="https://wyattpierson.github.io/wms-games-poke-bowl/" target="_blank" rel="noopener">poke bowl</a>
+              <span class="tag game">browser ↗</span>
+            </div>
+            <p class="desc">A retro bowl inspired, pokémon themed roguelike. Play it in your browser.</p>
           </div>
         </article>
       </div>
