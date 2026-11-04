@@ -6,7 +6,7 @@ Next real work: keep filling in actual albums in `js/data.js`, link the page fro
 ## Files
 
 - `index.html` — the page. Deliberately minimal: cover art / title / artist / year /
-  tag chips / optional note / spotify link / pick-again. Cover sits to the right
+  tag chips / optional note / spotify link. Cover sits to the right
   of the details on desktop, stacks on top for mobile. Styled to match
   the main site (dark theme, DM Mono + Playfair, grain + glows).
 - `js/data.js` — the `ALBUMS` array + data model / tag vocab docs. The only
@@ -47,8 +47,7 @@ No "start here" / favorite track — albums are meant to be listened start to
 finish. Highlight tracks are a possible future field, not shown for now.
 ```
 
-Albums without a `spotifyId` still get picked; the link renders as a
-disabled "no spotify link yet" button.
+Albums without a `spotifyId` still get picked; the listening link is omitted.
 
 ### Tag vocabulary (keep consistent — strategies + display rely on it)
 
@@ -69,17 +68,18 @@ Swapped via `CONFIG.strategy` at the top of `albums.js`.
 
 | strategy | behavior |
 |---|---|
-| `deterministic` (default) | seeded PRNG (mulberry32) with `dayOfYear * 1000 + attempts`. Same pick for everyone all day — it's *the* album of the day. |
+| `deterministic` (default) | seeded PRNG (mulberry32) with `dayOfYear * 1000`. Same pick for everyone all day — it's *the* album of the day. |
 | `random` | fully random |
 | `seasonal` | filter to albums tagged with the current season (falls back to all albums if none match), then deterministic within the pool |
 | `weather` *(planned, not built)* | fetch Open-Meteo (free, no API key) → map conditions to moods/pace → filter → pick. Keep as its own function; ~20 lines when we get to it. |
 
-### Pick again
+### Presentation
 
-- attempt counter in `localStorage`, keyed per day: `motd-attempts-YYYY-M-D`
-- each click advances the seed → sequence stays deterministic per day but
-  users can roll; resets naturally the next day
-- footer shows "N re-rolls today" as a small touch
+- Mood, pace, and genre chips are Wyatt's own descriptions, kept to help listeners
+  know what to expect.
+- A quiet “listen on spotify ↗” text link sits below the context with 2rem of space.
+- One pick per day; no reroll control or counter. Existing stored rerolls are ignored.
+- Keep this a small personal page for revisiting favorites and sharing with friends.
 
 ## Links
 

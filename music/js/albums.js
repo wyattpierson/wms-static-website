@@ -5,17 +5,13 @@
 
    STRATEGIES  (swap in CONFIG.strategy)
      "deterministic"  same pick for everyone on a given day.
-                      seed = day-of-year + attempts (see PICK AGAIN)
-     "random"         fully random, avoids repeating yesterday's pick
+                      seed = day-of-year
+     "random"         fully random
      "seasonal"       filters by current season first, then deterministic
      "weather"        (planned) fetch Open-Meteo (free, no key) and map
                       conditions → moods/pace, filter, then pick.
                       Keep it a separate function so it's easy to add.
 
-   PICK AGAIN
-   attempt count is stored in localStorage keyed by date. Each click
-   advances the seed, so the sequence is deterministic per day but
-   lets users roll. Resets naturally on the next day.
    ──────────────────────────────────────────────────────────────── */
 
 const CONFIG = {
@@ -23,11 +19,6 @@ const CONFIG = {
 };
 
 /* ── helpers ── */
-
-function todayKey() {
-  const d = new Date();
-  return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`;
-}
 
 function dayOfYear() {
   const now = new Date();
@@ -54,21 +45,6 @@ function makeRng(seed) {
   };
 }
 
-/* ── pick-again: per-day attempt counter ── */
-
-function getAttempts() {
-  try {
-    return parseInt(localStorage.getItem(`motd-attempts-${todayKey()}`) || "0", 10);
-  } catch { return 0; } // storage unavailable (private mode etc.)
-}
-
-function bumpAttempts() {
-  const key = `motd-attempts-${todayKey()}`;
-  const n = getAttempts() + 1;
-  try { localStorage.setItem(key, String(n)); } catch {}
-  return n;
-}
-
 /* ── strategies ── */
 
 function filterBySeason(albums) {
@@ -93,8 +69,8 @@ function pickAlbum() {
     return { album: pool[idx], why: why.length ? why : ["just felt like it"] };
   }
 
-  // "deterministic" (and "seasonal") — stable per day, advances on pick-again
-  const seed = dayOfYear() * 1000 + getAttempts();
+  // "deterministic" (and "seasonal") — stable per day
+  const seed = dayOfYear() * 1000;
   const rng = makeRng(seed);
   const idx = Math.floor(rng() * pool.length);
   return { album: pool[idx], why };

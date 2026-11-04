@@ -299,7 +299,6 @@
       display: flex;
       flex-wrap: wrap;
       gap: 0.5rem;
-      margin-bottom: 1.75rem;
     }
     .tag {
       display: inline-block;
@@ -317,46 +316,33 @@
     .why {
       font-size: 0.7rem;
       color: var(--muted);
-      margin-bottom: 2rem;
+      margin-top: 0.75rem;
       opacity: 0.8;
     }
     .why::before { content: '↳ '; color: var(--accent); }
 
-    /* action buttons */
-    .actions { display: flex; flex-wrap: wrap; gap: 0.75rem; }
+    /* Keep listening separate from the album context. */
+    .actions { margin-top: 2rem; }
 
-    .btn {
+    .spotify-link {
       display: inline-flex;
       align-items: center;
       gap: 0.5rem;
-      padding: 0.55rem 1.1rem;
-      border: 1px solid var(--border);
-      border-radius: 3px;
-      font-family: var(--font-mono);
+      min-height: 44px;
       font-size: 0.75rem;
       font-weight: 400;
       letter-spacing: 0.05em;
-      color: var(--muted);
+      color: var(--accent);
       text-decoration: none;
-      background: transparent;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      position: relative;
-      overflow: hidden;
+      text-underline-offset: 0.3em;
     }
-    .btn::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(135deg, var(--accent-dim), var(--accent-2-dim));
-      opacity: 0;
-      transition: opacity 0.2s;
+    .spotify-link:hover { text-decoration: underline; }
+    .spotify-link:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 4px;
+      border-radius: 2px;
     }
-    .btn:hover { border-color: var(--accent); color: var(--accent); }
-    .btn:hover::before { opacity: 1; }
-    .btn.primary { border-color: rgba(167, 139, 250, 0.4); color: var(--accent); }
-    .btn .arrow { font-size: 0.7rem; transition: transform 0.2s; }
-    .btn:hover .arrow { transform: translate(2px, -2px); }
+    .spotify-link .arrow { font-size: 0.7rem; }
 
     .empty {
       color: var(--muted);
@@ -473,7 +459,6 @@
 
   <footer>
     <span class="footer-text"><a href="/">wyattmakesstuff.com</a></span>
-    <span class="footer-text" id="attempts-note"></span>
   </footer>
 
   <script>
@@ -520,9 +505,9 @@
       ].join("");
 
       const link = spotifyUrl(a);
-      const linkBtn = link
-        ? `<a class="btn primary" href="${link}" target="_blank" rel="noopener">play on spotify <span class="arrow">↗</span></a>`
-        : `<span class="btn" style="opacity:0.4;cursor:default;">no spotify link yet</span>`;
+      const listenLink = link
+        ? `<a class="spotify-link" href="${link}" target="_blank" rel="noopener">listen on spotify <span class="arrow" aria-hidden="true">↗</span></a>`
+        : "";
 
       el.innerHTML = `
         <div class="pick-details">
@@ -536,22 +521,12 @@
           ${tags ? `<div class="tags">${tags}</div>` : ""}
           ${a.note ? `<div class="pick-note">${esc(a.note)}</div>` : ""}
           ${result.why && result.why.length ? `<div class="why">${esc(result.why.join(" · "))}</div>` : ""}
-          <div class="actions">
-            ${linkBtn}
-            <button class="btn" id="pick-again">pick again ↻</button>
-          </div>
+          ${listenLink ? `<div class="actions">${listenLink}</div>` : ""}
         </div>
         ${a.cover ? `<div class="pick-cover"><img src="${esc(a.cover)}" alt="${esc(a.title)} cover art" /></div>` : ""}
       `;
 
-      document.getElementById("pick-again").addEventListener("click", () => {
-        bumpAttempts();
-        render();
-      });
 
-      const n = getAttempts();
-      document.getElementById("attempts-note").textContent =
-        n > 0 ? `${n} re-roll${n === 1 ? "" : "s"} today` : "";
     }
 
     render();
