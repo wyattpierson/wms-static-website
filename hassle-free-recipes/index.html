@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="icon" type="image/png" href="icon.png" />
   <title>Hassle Free Recipes</title>
-  <meta name="description" content="Your Recipes, no ads, no disruptions, mobile optimized." />
+  <meta name="description" content="Your recipes, without ads or distractions. Organize your collection and cook step by step. Submitted for App Store review." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Playfair+Display:ital,wght@0,700;1,400&display=swap" rel="stylesheet" />
@@ -18,7 +18,7 @@
       --surface: #10101a;
       --border: #1e1e30;
       --text: #e2e0f0;
-      --muted: #52506e;
+      --muted: #9693b2;
       --accent: #a78bfa;
       --accent-2: #60a5fa;
       --accent-dim: rgba(167, 139, 250, 0.08);
@@ -201,7 +201,7 @@
     .hero-desc {
       font-size: 0.92rem;
       line-height: 1.8;
-      color: #6e6b8a;
+      color: #a8a5c4;
       max-width: 400px;
       margin-bottom: 2.5rem;
       opacity: 0;
@@ -209,27 +209,17 @@
       animation-delay: 0.45s;
     }
 
-    /* App Store button */
-    .appstore-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.75rem;
-      padding: 0.75rem 1.5rem;
-      background: var(--text);
-      color: var(--bg);
+    .release-status {
+      display: inline-block;
+      padding: .75rem 1rem;
+      border: 1px solid rgba(167,139,250,.4);
       border-radius: 4px;
-      text-decoration: none;
-      font-family: var(--font-mono);
-      font-size: 0.8rem;
-      font-weight: 500;
-      letter-spacing: 0.04em;
-      transition: opacity 0.2s, transform 0.2s;
-      opacity: 0;
-      animation: fadeUp 0.6s ease forwards;
-      animation-delay: 0.6s;
+      color: var(--accent);
+      font-size: .8rem;
+      line-height: 1.6;
+      background: var(--accent-dim);
     }
-    .appstore-btn:hover { opacity: 0.88; transform: translateY(-1px); }
-    .appstore-btn svg { flex-shrink: 0; }
+    a:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
 
     /* ── SCREENSHOTS ── */
     .hero-right {
@@ -264,6 +254,7 @@
 
     .screenshot-wrap img {
       width: 100%;
+      height: auto;
       display: block;
     }
 
@@ -465,12 +456,16 @@
         padding: 3rem 1.5rem 2rem;
         gap: 3rem;
       }
-      .hero-right { order: -1; padding-top: 1rem; }
+      .hero-right { padding-top: 1rem; gap: .75rem; }
       .screenshot-wrap.primary { width: 150px; }
       .screenshot-wrap.secondary { width: 130px; }
       .features-grid { grid-template-columns: 1fr; }
       footer { flex-direction: column; gap: 0.75rem; align-items: flex-start; }
       .footer-links { flex-wrap: wrap; gap: 1rem; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation: none !important; transition: none !important; }
+      nav.site-nav, .hero-icon-wrap, .hero-left h1, .hero-desc, .hero-right, .feature-card { opacity: 1; }
     }
   </style>
 </head>
@@ -485,7 +480,7 @@
       <a href="/" class="nav-logo">
         <span class="logo-tilde">~</span>wyattmakesstuff
       </a>
-      <a href="/hassle-free-recipes/" class="nav-support">support</a>
+      <a href="/hassle-free-recipes/support/" class="nav-support">support</a>
     </div>
   </nav>
 
@@ -496,7 +491,7 @@
         <div class="hero-icon">
           <img src="icon.png" alt="Hassle Free Recipes app icon" />
         </div>
-        <span class="hero-icon-label">// <span>available on the app store</span></span>
+        <span class="hero-icon-label">// <span>submitted for App Store review</span></span>
       </div>
 
       <h1>Hassle<br><em>Free Recipes</em></h1>
@@ -505,20 +500,15 @@
         Hassle Free Recipes is a place to manage your recipes in a simple way. No ads, no story telling, just the recipes.
       </p>
 
-      <a class="appstore-btn" href="todo" target="_blank" rel="noopener">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-          <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
-        </svg>
-        Download on the App Store
-      </a>
+      <p class="release-status">Submitted for App Store review.<br />App Store link coming after approval.</p>
     </div>
 
     <div class="hero-right">
       <div class="screenshot-wrap primary">
-        <img src="screenshot-1.webp" alt="Hassle Free Recipes feed screen" />
+        <img src="screenshot-1.png" alt="Recipe collection with search by name, tag, or ingredient" width="331" height="720" />
       </div>
       <div class="screenshot-wrap secondary">
-        <img src="screenshot-2.webp" alt="Hassle Free Recipes search screen" />
+        <img src="screenshot-2.png" alt="Step-by-step cooking view with ingredient quantities and a timer" width="331" height="720" />
       </div>
     </div>
   </section>
@@ -537,19 +527,19 @@
     <p class="section-label">// what it does</p>
     <div class="features-grid">
       <div class="feature-card">
-        <span class="feature-icon">⭐</span>
+        <span class="feature-icon" aria-hidden="true">📚</span>
         <h3>No ads, no stories, no distractions</h3>
-        <p>Just the recipes in an easy to view text form</p>
+        <p>Keep your recipes together and find them by name, tag, or ingredient.</p>
       </div>
       <div class="feature-card">
-        <span class="feature-icon">👥</span>
-        <h3>Mobile optimized view</h3>
-        <p>Ingredient quantities injected into recipe steps so you can see everything you need at once.</p>
+        <span class="feature-icon" aria-hidden="true">🥣</span>
+        <h3>Cook step by step</h3>
+        <p>Follow clear steps with ingredient quantities right where you need them, plus timers as you cook.</p>
       </div>
       <div class="feature-card">
-        <span class="feature-icon">💬</span>
+        <span class="feature-icon" aria-hidden="true">📥</span>
         <h3>Smart Imports</h3>
-        <p>Import from pictures or urls into the app.</p>
+        <p>Bring recipes into the app from pictures or URLs.</p>
       </div>
     </div>
   </section>
@@ -557,14 +547,9 @@
   <!-- ── CTA ── -->
   <section class="cta-section">
     <div class="cta-inner">
-      <h2>Ready to share your <em>taste?</em></h2>
-      <p>Free to download. Just you and your friends.</p>
-      <a class="appstore-btn" style="margin: 0 auto;" href="todo" target="_blank" rel="noopener">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-          <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
-        </svg>
-        Download on the App Store
-      </a>
+      <h2>Your recipes.<br><em>Less hassle.</em></h2>
+      <p>A simpler way to keep your recipes and follow along while you cook.</p>
+      <p class="release-status">Submitted for App Store review.<br />App Store link coming after approval.</p>
     </div>
   </section>
 
@@ -572,7 +557,7 @@
   <footer>
     <span class="footer-text">wyattmakesstuff.com / hassle-free-recipes</span>
     <nav class="footer-links">
-      <a href="/hassle-free-recipes/">support</a>
+      <a href="/hassle-free-recipes/support/">support</a>
       <a href="/hassle-free-recipes/support/privacy-policy.html" target="_blank" rel="noopener">privacy policy</a>
       <a href="mailto:wyattmakesstuff@yahoo.com">contact</a>
     </nav>
